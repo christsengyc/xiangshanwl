@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>香山濕地海洋保育中心 - 智慧導覽與互動系統</title>
+    <title>香山濕地：生態守護者闖關任務</title>
     <style>
         :root {
             --primary-blue: #003d5b;
@@ -12,756 +12,210 @@
             --bg-light: #f4f1ea;
             --panel-dark: #2c3e50;
             --text-dark: #333333;
-            --text-light: #ecf0f1;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; }
+        
+        header { background-color: var(--primary-blue); color: white; padding: 15px 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .container { max-width: 800px; width: 100%; margin: 20px auto; padding: 20px; flex-grow: 1; background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        
+        /* 關卡切換控制 */
+        .stage-content { display: none; animation: fadeIn 0.5s; }
+        .stage-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        body {
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* 頂部導航欄 */
-        header {
-            background-color: var(--primary-blue);
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo-area h1 {
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo-area small {
-            font-size: 0.75rem;
-            display: block;
-            color: #bdc3c7;
-        }
-
-        /* 主導航選單 */
-        nav {
-            display: flex;
-            background-color: var(--panel-dark);
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-        nav button {
-            background: none;
-            border: none;
-            color: #95a5a6;
-            padding: 15px 20px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            flex: 1;
-            text-align: center;
-        }
-
-        nav button.active {
-            color: white;
-            background-color: var(--accent-blue);
-            border-bottom: 4px solid var(--accent-green);
-        }
-
-        /* 內容容器 */
-        .container {
-            max-width: 1000px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 20px;
-            flex-grow: 1;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* 卡片元件 */
-        .card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border-left: 5px solid var(--primary-blue);
-        }
-
-        .card.accent {
-            border-left-color: var(--accent-green);
-        }
-
-        .card h2 {
-            margin-bottom: 15px;
-            color: var(--primary-blue);
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* 行動看板/智慧分流樣式 */
-        .status-badge-container {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .status-badge {
-            flex: 1;
-            min-width: 140px;
-            background: #edf2f7;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .status-badge .value {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--primary-blue);
-            margin-top: 5px;
-        }
-
-        .alert-box {
-            background-color: #fffaf0;
-            border: 1px solid #feebc8;
-            border-left: 5px solid #dd6b20;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        /* 歷史時間軸樣式 */
-        .timeline {
-            position: relative;
-            padding-left: 30px;
-            margin-top: 15px;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 9px;
-            top: 5px;
-            bottom: 5px;
-            width: 2px;
-            background: #cbd5e0;
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: -26px;
-            top: 4px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--accent-blue);
-            border: 2px solid white;
-        }
-
-        .timeline-item.danger .timeline-dot { background: #e74c3c; }
-        .timeline-item.success .timeline-dot { background: var(--accent-green); }
-
-        .timeline-date {
-            font-weight: bold;
-            color: var(--primary-blue);
-            margin-bottom: 3px;
-            font-size: 0.95rem;
-        }
-
-        /* 圖鑑網格 */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        @media (max-width: 600px) {
-            .grid-2 { grid-template-columns: 1fr; }
-            nav button { padding: 12px 10px; font-size: 0.9rem; }
-        }
-
-        .info-block {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 6px;
-            margin-top: 8px;
-        }
-
-        /* 遊戲區域專屬樣式 (繼承並優化使用者架構) */
-        #game-wrapper-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: var(--panel-dark);
-            padding: 15px;
-            border-radius: 10px;
-            color: white;
-        }
-
-        #hud-header {
-            width: 100%;
-            padding: 10px;
-            background-color: rgba(0,0,0,0.2);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-radius: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-
-        .stat-group { display: flex; flex-direction: column; width: 45%; min-width: 120px; margin: 5px 0; }
-        .stat-label { font-size: 0.85rem; margin-bottom: 3px; display: flex; justify-content: space-between; }
-        .progress-bar-bg { background-color: #7f8c8d; height: 12px; border-radius: 6px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; width: 0%; transition: width 0.3s ease; }
-        #flow-bar { background-color: var(--accent-blue); }
-        #bio-bar { background-color: var(--accent-green); }
-
-        #game-container {
-            position: relative;
-            width: 100%;
-            border: 3px solid #95a5a6;
-            cursor: crosshair;
-            aspect-ratio: 2.2 / 1; 
-            overflow: hidden; 
-            background-color: #8d6e63;
-            border-radius: 6px;
-        }
-
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-
-        #dialogue-box {
-            width: 100%;
-            background-color: #fff;
-            color: #333;
-            border-radius: 8px;
-            padding: 12px;
-            display: flex;
-            align-items: flex-start;
-            margin-top: 10px;
-            border: 3px solid var(--accent-blue);
-            min-height: 75px; 
-        }
-
-        .avatar { width: 45px; height: 45px; font-size: 26px; margin-right: 12px; flex-shrink: 0; border-radius: 50%; border: 2px solid #ddd; display: flex; justify-content: center; align-items: center; background: #f0f0f0; }
-        .dialogue-content { flex-grow: 1; line-height: 1.4; }
-        .char-name { font-weight: bold; font-size: 0.95rem; margin-bottom: 3px; }
-        .dialogue-text { font-size: 0.9rem; color: #444; }
-
-        .overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); display: flex;
-            justify-content: center; align-items: center; flex-direction: column;
-            color: white; text-align: center; padding: 15px;
-            z-index: 10;
-        }
-        .btn { background-color: var(--accent-blue); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 0.95rem; }
+        h2 { color: var(--primary-blue); margin-bottom: 15px; border-bottom: 3px solid var(--accent-green); padding-bottom: 5px; display: inline-block; }
+        p { line-height: 1.6; margin-bottom: 15px; }
+        
+        .btn { background-color: var(--accent-blue); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.1rem; width: 100%; transition: 0.3s; margin-top: 10px; }
         .btn:hover { background-color: #2980b9; }
+        .btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        .btn-success { background-color: var(--accent-green); }
 
-        /* 交通與週邊列表 */
-        .route-item {
-            padding: 12px;
-            border-bottom: 1px solid #edf2f7;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .route-item:last-child { border-bottom: none; }
-        .spot-tag {
-            background-color: #ebf8ff;
-            color: #2b6cb0;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
+        /* 關卡進度條 */
+        .progress-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; }
+        .progress-indicator::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: #e0e0e0; z-index: 1; transform: translateY(-50%); }
+        .step { width: 30px; height: 30px; border-radius: 50%; background: #e0e0e0; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 2; position: relative; }
+        .step.active { background: var(--accent-blue); box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
+        .step.completed { background: var(--accent-green); }
 
-        footer {
-            background-color: var(--primary-blue);
-            color: #bdc3c7;
-            text-align: center;
-            padding: 15px;
-            font-size: 0.8rem;
-            margin-top: auto;
-        }
+        /* 遊戲一：清除紅樹林 */
+        #game-container { position: relative; width: 100%; border: 3px solid #95a5a6; cursor: crosshair; aspect-ratio: 2.2 / 1; overflow: hidden; background-color: #8d6e63; border-radius: 6px; margin-bottom: 15px; }
+        canvas { display: block; width: 100%; height: 100%; }
+        .hud { display: flex; justify-content: space-between; background: var(--panel-dark); color: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.9rem; }
+        
+        /* 遊戲二：泥灘尋寶 */
+        .mudflat-area { position: relative; width: 100%; aspect-ratio: 16 / 9; background: url('https://images.unsplash.com/photo-1621508654686-809730590ed8?auto=format&fit=crop&q=80&w=800') center/cover; border-radius: 8px; border: 3px solid var(--primary-blue); overflow: hidden; }
+        .hidden-animal { position: absolute; font-size: 2.5rem; cursor: pointer; transition: transform 0.2s; user-select: none; opacity: 0.9; }
+        .hidden-animal:hover { transform: scale(1.2); }
+        .hidden-animal.found { pointer-events: none; filter: drop-shadow(0 0 10px yellow); animation: bounce 0.5s; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        /* 遊戲三：戶外打卡 */
+        .checklist { display: flex; flex-direction: column; gap: 15px; }
+        .check-item { background: #f8f9fa; border: 2px solid #e0e0e0; padding: 15px; border-radius: 8px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; }
+        .check-item.checked { border-color: var(--accent-green); background: #e8f8f5; }
+        .check-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #ccc; display: flex; align-items: center; justify-content: center; }
+        .check-item.checked .check-circle { background: var(--accent-green); border-color: var(--accent-green); }
+        .check-item.checked .check-circle::after { content: '✓'; color: white; font-weight: bold; }
+
+        /* 完賽證書 */
+        .certificate { text-align: center; border: 5px double var(--primary-blue); padding: 30px; background: #fffcf5; border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo-area">
-            <h1>🌊 香山濕地海洋保育中心</h1>
-            <small>主管單位：珍古德保育基金會 (Roots & Shoots)</small>
-        </div>
-        <div style="font-size: 0.85rem; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 20px;">
-            🤖 自助智慧導覽系統
-        </div>
+        <h1>🌊 香山濕地：生態守護者任務</h1>
+        <p style="margin:0; font-size: 0.9rem; color: #bdc3c7;">珍古德保育基金會 根與芽行動</p>
     </header>
 
-    <nav>
-        <button class="nav-btn active" onclick="switchTab('home')">🏠 營運大廳</button>
-        <button class="nav-btn" onclick="switchTab('history')">📜 歷史與生態</button>
-        <button class="nav-btn" id="game-nav-btn" onclick="switchTab('game')">🕹️ 生態互動遊戲</button>
-        <button class="nav-btn" onclick="switchTab('outdoor')">🦀 步道探索</button>
-        <button class="nav-btn" onclick="switchTab('traffic')">🚌 交通與串聯</button>
-    </nav>
-
     <div class="container">
-
-        <div id="home" class="tab-content active">
-            <div class="alert-box" id="flow-alert">
-                <strong>💡 智慧分流建議：</strong> 
-                <span id="alert-text">目前館內空間適中，歡迎參觀。建議配合即時潮汐前往賞蟹步道探險！</span>
-            </div>
-
-            <div class="card">
-                <h2>📊 即時環境與館內動態</h2>
-                <div class="status-badge-container">
-                    <div class="status-badge">
-                        <div>館內擁擠度</div>
-                        <div class="value" id="crowd-status">舒適 🟢</div>
-                    </div>
-                    <div class="status-badge">
-                        <div>今日天氣</div>
-                        <div class="value">晴朗 ☀️</div>
-                    </div>
-                    <div class="status-badge">
-                        <div>目前潮汐</div>
-                        <div class="value">退潮中 🦀</div>
-                    </div>
-                </div>
-                <p style="font-size:0.9rem; color:#666;">*數據每 15 秒自動模擬更新，協助您避開人潮尖峰。</p>
-            </div>
-
-            <div class="card accent">
-                <h2>🤝 珍古德基金會的問候</h2>
-                <p>歡迎來到香山濕地海洋保育中心！本館目前由<strong>珍古德保育基金會</strong>規劃營運。我們秉持珍古德博士「根與芽 (Roots & Shoots)」的精神，鼓勵每個人透過在地行動，關懷環境、社區與動物。</p>
-                <div class="info-block" style="border-left: 3px solid var(--accent-green)">
-                    <strong>🌱 今日根與芽挑戰：</strong>完成「生態互動遊戲」並前往「賞蟹步道」拍下招潮蟹，即可至櫃檯或系統自助區換取電子保育章！
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>🙋 自助服務台 (常見問題免排隊)</h2>
-                <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
-                    <details style="background:#f8f9fa; padding:10px; border-radius:6px;">
-                        <summary style="font-weight:bold; cursor:pointer;">1. 賞蟹步道開放時間與規範？</summary>
-                        <p style="padding-top:8px; font-size:0.9rem; color:#444;">步道配合潮汐開放（大潮或強風管制）。請勿進入泥灘地、勿亂丟垃圾。今日預計開放至 18:00。</p>
-                    </details>
-                    <details style="background:#f8f9fa; padding:10px; border-radius:6px;">
-                        <summary style="font-weight:bold; cursor:pointer;">2. 附近哪裡有洗手間與補水站？</summary>
-                        <p style="padding-top:8px; font-size:0.9rem; color:#444;">中心大廳右側設有飲水機與親子友善洗手間。若人潮較多，戶外停車場旁亦有公共洗手間。</p>
-                    </details>
-                    <details style="background:#f8f9fa; padding:10px; border-radius:6px;">
-                        <summary style="font-weight:bold; cursor:pointer;">3. 這裡有大眾運輸工具可以離開嗎？</summary>
-                        <p style="padding-top:8px; font-size:0.9rem; color:#444;">可搭乘新竹市觀光巴士。請切換至「交通與串聯」分頁，查看即時公車倒數與計程車共乘資訊。</p>
-                    </details>
-                </div>
-            </div>
+        <div class="progress-indicator">
+            <div class="step active" id="step-0">0</div>
+            <div class="step" id="step-1">1</div>
+            <div class="step" id="step-2">2</div>
+            <div class="step" id="step-3">3</div>
         </div>
 
-        <div id="history" class="tab-content">
-            <div class="card">
-                <h2>📜 香山濕地歷程：紅樹林的去與留</h2>
-                <p>香山濕地的泥灘地是天然的生態寶庫，但過去曾因為人類的介入經歷了一場生態危機。讓我們來看看這段具教育意義的歷史：</p>
-                
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-date">1990 年代 · 錯誤的開端</div>
-                        <p style="font-size:0.9rem; color:#444;">為了防風定砂與美化綠化，人為大面積種植水筆仔等紅樹林。</p>
-                    </div>
-                    <div class="timeline-item danger">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-date">2000-2015 年 · 生態反撲與危機</div>
-                        <p style="font-size:0.9rem; color:#444;">紅樹林過度蔓延擴散，導致台灣特有種「台灣招潮蟹」棲地被剝奪、底棲生物逃離、小黑蚊嚴重孳生，且密林阻擋了排洪河道。</p>
-                    </div>
-                    <div class="timeline-item success">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-date">2015-2016 年 · 關鍵的清除行動</div>
-                        <p style="font-size:0.9rem; color:#444;">新竹市政府與珍古德基金會、保育志工合作，展開大規模人工與機械拔除行動，成功清空 300 多公頃的過密紅樹林。</p>
-                    </div>
-                    <div class="timeline-item success">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-date">現在 · 生機重現的泥灘地</div>
-                        <p style="font-size:0.9rem; color:#444;">潮水恢復順暢、泥灘地重新露出，招潮蟹與活化石「鱟」紛紛回流，候鳥也再度駐足。<strong>(可至「互動遊戲」體驗這段歷程！)</strong></p>
-                    </div>
-                </div>
+        <div id="stage-0" class="stage-content active">
+            <h2>🌍 歡迎加入守護者行列</h2>
+            <p>你好！這裡是香山濕地海洋保育中心。為了讓各位了解這片美麗泥灘地的故事，我們準備了三個挑戰任務。</p>
+            <p>你將回到過去解決歷史生態危機、在泥灘地尋找回歸的生物，最後親自踏上戶外的「賞蟹步道」完成實地勘查。</p>
+            <div style="background: #e8f8f5; padding: 15px; border-left: 4px solid var(--accent-green); margin-bottom: 20px;">
+                <strong>💡 任務目標：</strong> 完成三道關卡，獲取「根與芽」生態守護者數位證書！
             </div>
-
-            <div class="card accent">
-                <h2>🦀 泥灘明星生態圖鑑</h2>
-                <div class="grid-2">
-                    <div style="background:#f8f9fa; padding:15px; border-radius:8px;">
-                        <span style="font-size:2rem;">🦀</span>
-                        <h3 style="font-size:1.1rem; color:var(--primary-blue); margin:5px 0;">台灣招潮蟹</h3>
-                        <p style="font-size:0.85rem; color:#555;">特有種。雄蟹擁有一隻巨大的白色大螯。紅樹林清除後，香山濕地成為全球台灣招潮蟹族群數量最多的復育核心區。</p>
-                    </div>
-                    <div style="background:#f8f9fa; padding:15px; border-radius:8px;">
-                        <span style="font-size:2rem;">🛡️</span>
-                        <h3 style="font-size:1.1rem; color:var(--primary-blue); margin:5px 0;">活化石：三疣鱟</h3>
-                        <p style="font-size:0.85rem; color:#555;">在地球上存在超過四億年。香山濕地的細緻泥灘地是鱟幼體（稚鱟）極為重要的發育溫床，需要高度的防擾保護。</p>
-                    </div>
-                </div>
-            </div>
+            <button class="btn" onclick="goToStage(1)">接受任務，開始第一關！</button>
         </div>
 
-        <div id="game" class="tab-content">
-            <div class="card">
-                <h2>🕹️ 環境教育體驗：生機重現遊戲</h2>
-                <p style="margin-bottom:10px; font-size:0.9rem;"><strong>遊戲背景：</strong> 重回 2015 年的清除行動！用您的滑鼠或手指拖曳（生態鏟），清除過於茂密的綠色紅樹林，幫小螃蟹與魚兒打通一條由左至右的藍色潮水道路吧！</p>
-                
-                <div id="game-wrapper-section">
-                    <div id="hud-header">
-                        <div class="stat-group">
-                            <div class="stat-label"><span>🌊 潮水順暢度</span> <span id="flow-text">0%</span></div>
-                            <div class="progress-bar-bg">
-                                <div id="flow-bar" class="progress-bar-fill"></div>
-                            </div>
-                        </div>
-                        <div style="text-align: center; font-size: 0.85rem;">
-                            <strong>工具：生態鏟 🛠️</strong><br>
-                            <small>點擊並拖曳清除紅樹林</small>
-                        </div>
-                        <div class="stat-group">
-                            <div class="stat-label"><span>🦀 生態多樣性</span> <span id="bio-text">0%</span></div>
-                            <div class="progress-bar-bg">
-                                <div id="bio-bar" class="progress-bar-fill"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="game-container">
-                        <canvas id="gameCanvas"></canvas>
-
-                        <div id="info-overlay" class="overlay">
-                            <h3 style="color:var(--accent-green); margin-bottom:10px;">香山濕地：生機重現</h3>
-                            <p style="font-size:0.85rem; max-width:400px; margin-bottom:10px;">打通從左到右的暢通水道，讓潮水順暢度與生態多樣性都達到 100% 即可通關！</p>
-                            <button class="btn" id="start-game-btn">開始復育</button>
-                        </div>
-
-                        <div id="win-overlay" class="overlay" style="display:none;">
-                            <h2 style="color:var(--accent-green);">🎉 生態復育成功！</h2>
-                            <p style="font-size:0.9rem; margin:10px 0;">潮水恢復流動，香山濕地重回昔日生機！</p>
-                            <button class="btn" onclick="resetGame()">重新挑戰</button>
-                        </div>
-
-                        <div id="hint-modal" class="overlay" style="display:none;">
-                            <div style="background:var(--panel-dark); padding:20px; border-radius:10px; border:2px solid #f39c12; max-width:280px;">
-                                <h3 style="color:#f39c12;">💡 保育提示</h3>
-                                <p style="font-size:0.85rem; margin:10px 0;">請從最左側的潮水起點開始，向右橫向開闢出一條泥灘通路！</p>
-                                <button class="btn" style="background:#f39c12;" id="hint-confirm-btn">了解</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="dialogue-box">
-                        <div class="avatar" id="char-avatar">🦀</div>
-                        <div class="dialogue-content">
-                            <div class="char-name" id="char-name" style="color: #e67e22;">小招 (招潮蟹)</div>
-                            <div class="dialogue-text" id="char-text">準備好了嗎？點擊「開始復育」幫幫我們吧！</div>
-                        </div>
-                    </div>
-                </div>
+        <div id="stage-1" class="stage-content">
+            <h2>關卡一：回到 2015，解決生態危機</h2>
+            <p><strong>歷史回顧：</strong>過去為防風大量種植紅樹林，卻導致林地過密、泥灘微棲地消失，招潮蟹的家不見了！</p>
+            <p><strong>你的任務：</strong>化身保育志工，用手指/滑鼠拖曳清除畫面上過密的綠色紅樹林，打通讓藍色海水流動的通道！</p>
+            
+            <div class="hud">
+                <span>🌊 潮水流通率: <span id="flow-text">0%</span></span>
+                <span>🛠️ 工具: 生態鏟</span>
             </div>
+            
+            <div id="game-container">
+                <canvas id="gameCanvas"></canvas>
+            </div>
+            
+            <button class="btn btn-success" id="btn-next-2" style="display: none;" onclick="goToStage(2)">🎉 復育成功！前往下一關</button>
         </div>
 
-        <div id="outdoor" class="tab-content">
-            <div class="card accent">
-                <h2>🚶 戶外賞蟹步道任務卡</h2>
-                <p>本館空間較小，主要的精采生態都在館外**250公尺長的賞蟹步道**！請攜帶手機，在步道漫步時完成以下觀察任務：</p>
-                
-                <div style="margin-top:15px; display:flex; flex-direction:column; gap:12px;">
-                    <label style="display:flex; align-items:center; gap:10px; background:#fff; padding:12px; border-radius:6px; border:1px solid #ddd; cursor:pointer;">
-                        <input type="checkbox" style="width:18px; height:18px;">
-                        <div>
-                            <strong>任務 1：尋找白鰲大俠</strong>
-                            <div style="font-size:0.8rem; color:#666;">在步道前半段泥灘尋找揮舞大白鰲的「台灣招潮蟹」。</div>
-                        </div>
-                    </label>
-                    <label style="display:flex; align-items:center; gap:10px; background:#fff; padding:12px; border-radius:6px; border:1px solid #ddd; cursor:pointer;">
-                        <input type="checkbox" style="width:18px; height:18px;">
-                        <div>
-                            <strong>任務 2：觀察橫行步法</strong>
-                            <div style="font-size:0.8rem; color:#666;">觀察網紋招潮蟹或弧邊招潮蟹，看看牠們受驚嚇時躲進沙洞的速度。</div>
-                        </div>
-                    </label>
-                    <label style="display:flex; align-items:center; gap:10px; background:#fff; padding:12px; border-radius:6px; border:1px solid #ddd; cursor:pointer;">
-                        <input type="checkbox" style="width:18px; height:18px;">
-                        <div>
-                            <strong>任務 3：守護活化石</strong>
-                            <div style="font-size:0.8rem; color:#666;">在中心展示區或步道告示牌閱讀「三疣鱟」的介紹，並對不破壞棲地做出承諾。</div>
-                        </div>
-                    </label>
+        <div id="stage-2" class="stage-content">
+            <h2>關卡二：生機重現，尋找泥灘明星</h2>
+            <p>太棒了！因為你清除了過密的紅樹林，海水重新滋潤了泥灘地，生物們都回來了。</p>
+            <p><strong>你的任務：</strong>請在下方泥灘地找出隱藏的 <strong>3 隻台灣招潮蟹 (🦀)</strong> 與 <strong>1 隻三疣鱟 (🛡️)</strong>。</p>
+            
+            <p style="font-weight: bold; color: var(--primary-blue);">已找到：<span id="found-count">0</span> / 4</p>
+            
+            <div class="mudflat-area" id="mudflat-game">
                 </div>
-            </div>
+
+            <button class="btn btn-success" id="btn-next-3" style="display: none;" onclick="goToStage(3)">🎉 尋寶完成！準備前往戶外</button>
         </div>
 
-        <div id="traffic" class="tab-content">
-            <div class="card">
-                <h2>🚌 大眾運輸即時接駁指引</h2>
-                <p style="font-size:0.9rem; color:#555; margin-bottom:15px;">由於目前固定公車班次較少，本系統特別為您整合「新觀光巴士/接駁車」模擬資訊，協助您規劃回程：</p>
-                
-                <div style="background:#f8f9fa; border-radius:8px; overflow:hidden;">
-                    <div class="route-item">
-                        <div>
-                            <strong>新竹香山觀光巴士 (往三姓橋火車站)</strong>
-                            <div style="font-size:0.8rem; color:#7f8c8d;">接駁站點：保育中心正門口</div>
-                        </div>
-                        <div style="color:#e67e22; font-weight:bold;" id="bus-timer-1">預估再 12 分鐘進站</div>
-                    </div>
-                    <div class="route-item">
-                        <div>
-                            <strong>市區公車 58 路</strong>
-                            <div style="font-size:0.8rem; color:#7f8c8d;">最近站點：西濱路步行 8 分鐘</div>
-                        </div>
-                        <div style="color:#7f8c8d; font-weight:bold;">班次較稀少 (請依現場為準)</div>
+        <div id="stage-3" class="stage-content">
+            <h2>關卡三：走出館外，實地探索！</h2>
+            <p>生態保育不能只在螢幕上！現在，請帶著你的手機，步出保育中心大門，前往長達 250 公尺的<strong>賞蟹步道</strong>。</p>
+            <p><strong>你的任務：</strong>在步道上實際觀察，完成下列清單（點擊即可打勾）：</p>
+
+            <div class="checklist">
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <div class="check-circle"></div>
+                    <div>
+                        <strong>尋找白鰲大俠</strong>
+                        <div style="font-size: 0.85rem; color: #666;">在步道前半段泥灘，親眼看到揮舞大白鰲的招潮蟹。</div>
                     </div>
                 </div>
-                
-                <div style="margin-top:15px; display:flex; gap:10px;">
-                    <button class="btn" style="flex:1; background:#27ae60;" onclick="alert('已為您叫車！模擬：合作計程車派遣中...')">🚕 呼叫合作計程車/共乘</button>
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <div class="check-circle"></div>
+                    <div>
+                        <strong>感受海風與潮汐</strong>
+                        <div style="font-size: 0.85rem; color: #666;">走到步道中段，觀察目前的潮水是漲潮還是退潮。</div>
+                    </div>
+                </div>
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <div class="check-circle"></div>
+                    <div>
+                        <strong>不干擾承諾</strong>
+                        <div style="font-size: 0.85rem; color: #666;">我承諾不丟垃圾落海、不進入泥灘地踩踏鱟的棲地。</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="card accent">
-                <h2>📍 週邊成熟景點串聯 (香山生態小旅行)</h2>
-                <p style="font-size:0.9rem; color:#555; margin-bottom:12px;">參觀完保育中心後，不妨順道前往周邊成熟景點，開車或騎自行車皆可在 5-15 分鐘內抵達：</p>
-                
-                <div style="display:flex; flex-direction:column; gap:10px;">
-                    <div style="background:#fff; border:1px solid #e2e8f0; padding:12px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <span class="spot-tag">距離 2.5 km</span> <strong>海山漁港 ⚓</strong>
-                            <div style="font-size:0.8rem; color:#666;">觀看夕陽、購買現撈漁獲，極佳的在地漁村體驗。</div>
-                        </div>
-                        <button class="btn" style="margin:0; padding:4px 8px; font-size:0.8rem;" onclick="alert('開啟地圖導航至：海山漁港')">導航</button>
-                    </div>
-                    <div style="background:#fff; border:1px solid #e2e8f0; padding:12px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <span class="spot-tag" style="background:#edf2f7; color:#4a5568;">距離 1.2 km</span> <strong>那魯灣文化聚落 🏹</strong>
-                            <div style="font-size:0.8rem; color:#666;">台灣西海岸唯一的阿美族聚落，有特色建築與遊樂設施。</div>
-                        </div>
-                        <button class="btn" style="margin:0; padding:4px 8px; font-size:0.8rem;" onclick="alert('開啟地圖導航至：那魯灣文化聚落')">導航</button>
-                    </div>
-                    <div style="background:#fff; border:1px solid #e2e8f0; padding:12px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <span class="spot-tag">距離 4.0 km</span> <strong>香山天后宮 🛕</strong>
-                            <div style="font-size:0.8rem; color:#666;">歷史悠久的古老媽祖廟，見證香山過去的港口繁華歷史。</div>
-                        </div>
-                        <button class="btn" style="margin:0; padding:4px 8px; font-size:0.8rem;" onclick="alert('開啟地圖導航至：香山天后宮')">導航</button>
-                    </div>
-                </div>
+            <button class="btn btn-success" id="btn-finish" style="display: none; margin-top: 20px;" onclick="goToStage(4)">領取守護者證書</button>
+        </div>
+
+        <div id="stage-4" class="stage-content">
+            <div class="certificate">
+                <h2 style="border: none;">🏆 根與芽生態守護者證書</h2>
+                <p>茲證明</p>
+                <h3 style="color: var(--accent-green); font-size: 2rem; margin: 10px 0;">優秀的探索者</h3>
+                <p>已成功完成香山濕地歷史復育、生態辨識與戶外實地勘查任務。</p>
+                <div style="font-size: 4rem; margin: 10px 0;">🦀 🌿 🛡️</div>
+                <p style="font-size: 0.9rem; color: #666;">珍古德保育基金會 敬發</p>
             </div>
+            <p style="text-align: center; margin-top: 20px; font-size: 0.9rem;">您可以向櫃檯出示此畫面領取紀念小卡，或將此頁面截圖留念！</p>
+            <button class="btn" onclick="location.reload()">重新體驗</button>
         </div>
 
     </div>
 
-    <footer>
-        <p>© 2026 香山濕地海洋保育中心 & 珍古德保育基金會 聯合版權所有</p>
-        <p style="font-size:0.7rem; margin-top:5px; color:#95a5a6;">互動科技與環境教育整合系統原型 v1.0</p>
-    </footer>
-
     <script>
-        // --- 頁面標籤切換邏輯 ---
-        function switchTab(tabId) {
-            // 切換頁面顯示
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-
-            // 切換按鈕樣式
-            const buttons = document.querySelectorAll('nav button');
-            buttons.forEach(btn => btn.classList.remove('active'));
+        // --- 關卡控制系統 ---
+        let currentStage = 0;
+        
+        function goToStage(stageNum) {
+            // 隱藏所有關卡
+            document.querySelectorAll('.stage-content').forEach(el => el.classList.remove('active'));
+            // 顯示目標關卡
+            document.getElementById('stage-' + stageNum).classList.add('active');
             
-            // 尋找對應的按鈕並高亮
-            event.currentTarget.classList.add('active');
-
-            // 特殊處理：當切換到遊戲分頁時，重新計算 Canvas 尺寸以防破圖
-            if (tabId === 'game') {
-                setTimeout(() => {
-                    resizeCanvas();
-                }, 100);
+            // 更新進度條
+            if (stageNum <= 3) {
+                document.querySelectorAll('.step').forEach((el, index) => {
+                    if (index < stageNum) el.classList.add('completed');
+                    if (index === stageNum) el.classList.add('active');
+                    else el.classList.remove('active');
+                });
             }
+
+            // 初始化特定關卡邏輯
+            if (stageNum === 1) initCanvasGame();
+            if (stageNum === 2) initFindGame();
         }
-
-        // --- 智慧人流自動模擬 (分擔人力的核心功能) ---
-        function simulateKioskOperations() {
-            const crowdStatuses = ["舒適 🟢", "適中 🟡", "擁擠 🔴"];
-            const alerts = [
-                "目前館內空間適中，歡迎參觀。建議配合即時潮汐前往賞蟹步道探險！",
-                "館內正值尖峰期人潮較多！建議您可先漫步至【戶外賞蟹步道】或前往鄰近的【海山漁港】看夕陽唷！",
-                "戶外目前風力較大，賞蟹步道暫時局部管制，歡迎進入館內體驗生態互動遊戲。"
-            ];
-
-            // 每隔一段時間隨機變動，模擬真實 kiosk 即時看板
-            setInterval(() => {
-                const randIndex = Math.floor(Math.random() * 3);
-                document.getElementById('crowd-status').innerText = crowdStatuses[randIndex];
-                document.getElementById('alert-text').innerText = alerts[randIndex];
-                
-                if (randIndex === 2) {
-                    document.getElementById('flow-alert').style.borderLeftColor = "#e74c3c";
-                } else if (randIndex === 1) {
-                    document.getElementById('flow-alert').style.borderLeftColor = "#f39c12";
-                } else {
-                    document.getElementById('flow-alert').style.borderLeftColor = "#dd6b20";
-                }
-
-                // 模擬公車倒數
-                const busMinutes = Math.floor(Math.random() * 15) + 1;
-                document.getElementById('bus-timer-1').innerText = `預估再 ${busMinutes} 分鐘進站`;
-            }, 15000);
-        }
-        simulateKioskOperations();
-
 
         // ==========================================
-        // --- 核心互動遊戲邏輯 (整合自使用者提供) ---
+        // 關卡一：紅樹林清除 Canvas 遊戲
         // ==========================================
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        
-        const COLS = 40; 
-        const ROWS = 20; 
+        const COLS = 40; const ROWS = 20; 
         let dynamicGridSize = 0; 
-        
         let grid = []; 
         let isDragging = false;
-        
-        const characters = {
-            crab: { name: "小招 (招潮蟹)", icon: "🦀", color: "#e67e22" },
-            oyster: { name: "牡蠣媽媽", icon: "🦪", color: "#7f8c8d" },
-            bird: { name: "高蹺鴴", icon: "🐦", color: "#e91e63" },
-            fish: { name: "烏魚", icon: "🐟", color: "#3498db" }
-        };
-        
-        let hintTimerId = null; 
-
-        let state = {
-            flowPercent: 0,
-            bioPercent: 0,
-            milestones: { 
-                firstClear: false, 
-                halfway: false, 
-                finish: false,
-                hintFlowObstructionShown: false, 
-                hintTimerActive: false, 
-            }
-        };
-
-        let currentTypeWriterInterval = null; 
+        let flowPercent = 0;
+        let gameCanvasInitialized = false;
 
         function resizeCanvas() {
             const container = document.getElementById('game-container');
             if (!container || container.clientWidth === 0) return;
-            
             canvas.width = container.clientWidth;
             canvas.height = container.clientHeight;
             dynamicGridSize = canvas.width / COLS;
-            if(grid.length > 0) {
-                updateSimulation(); 
-            }
+            if(grid.length > 0) updateSimulation(); 
         }
 
-        function showHintModal() {
-            document.getElementById('hint-modal').style.display = 'flex';
-        }
-
-        function getCoordsFromEvent(e) {
-            let clientX, clientY;
-            if (e.touches && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-            const rect = canvas.getBoundingClientRect();
-            const x = clientX - rect.left;
-            const y = clientY - rect.top;
-            const col = Math.floor(x / dynamicGridSize);
-            const row = Math.floor(y / dynamicGridSize);
-            return { row, col };
-        }
-
-        function handleInput(e) {
-            if (isDragging && e.cancelable) e.preventDefault(); 
-            if (!isDragging) return;
-            const { row, col } = getCoordsFromEvent(e);
-            
-            if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
-                if (grid[row][col] === 1) {
-                    grid[row][col] = 0; // 清除紅樹林為泥灘地
-                    updateSimulation(); 
-
-                    // 延遲提示邏輯
-                    if (state.flowPercent < 10 && 
-                        !state.milestones.hintFlowObstructionShown &&
-                        !state.milestones.hintTimerActive) 
-                    {
-                        state.milestones.hintTimerActive = true;
-                        hintTimerId = setTimeout(() => {
-                            if (state.flowPercent < 10) {
-                                showHintModal(); 
-                                state.milestones.hintFlowObstructionShown = true;
-                            }
-                            state.milestones.hintTimerActive = false;
-                            hintTimerId = null;
-                        }, 3000); 
-                    }
-                }
-            }
-        }
-
-        function startGame() {
+        function initCanvasGame() {
+            if (gameCanvasInitialized) return;
             grid = [];
-            state.flowPercent = 0;
-            state.bioPercent = 0;
-            state.milestones = {
-                firstClear: false,
-                halfway: false,
-                finish: false,
-                hintFlowObstructionShown: false,
-                hintTimerActive: false
-            };
+            flowPercent = 0;
+            document.getElementById('btn-next-2').style.display = 'none';
 
             for (let r = 0; r < ROWS; r++) {
                 let row = [];
@@ -770,13 +224,36 @@
                 }
                 grid.push(row);
             }
+            
+            canvas.addEventListener('mousedown', () => isDragging = true);
+            canvas.addEventListener('mouseup', () => isDragging = false);
+            canvas.addEventListener('mousemove', handleInput);
+            canvas.addEventListener('touchstart', (e) => { isDragging = true; handleInput(e); }, { passive: false });
+            canvas.addEventListener('touchend', () => isDragging = false);
+            canvas.addEventListener('touchmove', handleInput, { passive: false });
+            window.addEventListener('resize', resizeCanvas);
+            
             resizeCanvas(); 
-            setDialogue('crab', "救命！紅樹林長得太密了，潮水進不來，我們的泥灘家園快不見了！！快幫幫我們！"); 
+            gameCanvasInitialized = true;
         }
 
-        function resetGame() {
-            document.getElementById('win-overlay').style.display = 'none';
-            startGame();
+        function handleInput(e) {
+            if (isDragging && e.cancelable) e.preventDefault(); 
+            if (!isDragging) return;
+            let clientX, clientY;
+            if (e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } 
+            else { clientX = e.clientX; clientY = e.clientY; }
+            
+            const rect = canvas.getBoundingClientRect();
+            const col = Math.floor((clientX - rect.left) / dynamicGridSize);
+            const row = Math.floor((clientY - rect.top) / dynamicGridSize);
+            
+            if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+                if (grid[row][col] === 1) {
+                    grid[row][col] = 0; 
+                    updateSimulation(); 
+                }
+            }
         }
 
         function draw() {
@@ -784,25 +261,14 @@
             const G = dynamicGridSize; 
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
-                    const x = c * G;
-                    const y = r * G;
+                    const x = c * G; const y = r * G;
                     if (x + G > canvas.width || y + G > canvas.height) continue; 
-
                     if (grid[r][c] === 1) {
                         ctx.fillStyle = "#27ae60"; ctx.fillRect(x, y, G, G);
-                        ctx.fillStyle = "#2ecc71"; ctx.fillRect(x + G * 0.1, y + G * 0.1, G * 0.8, G * 0.8);
                     } else if (grid[r][c] === 2) {
                         ctx.fillStyle = "#3498db"; ctx.fillRect(x, y, G, G);
-                        // 根據生態分數隨機顯示動態生物
-                        if (state.bioPercent > 40 && Math.random() < 0.004) { 
-                            ctx.font = `${G * 0.7}px Arial`; 
-                            ctx.fillText("🦀", x, y + G * 0.8);
-                        } else if (state.bioPercent > 70 && Math.random() < 0.002) { 
-                            ctx.font = `${G * 0.7}px Arial`;
-                            ctx.fillText("🐦", x, y + G * 0.8);
-                        }
                     } else {
-                        ctx.fillStyle = "#8d6e63"; ctx.fillRect(x, y, G, G); // 泥灘地
+                        ctx.fillStyle = "#8d6e63"; ctx.fillRect(x, y, G, G);
                     }
                 }
             }
@@ -810,112 +276,80 @@
         
         function updateSimulation() {
             for (let r = 0; r < ROWS; r++) { for (let c = 0; c < COLS; c++) { if (grid[r][c] === 2) grid[r][c] = 0; } }
-            let queue = [];
-            let wetCount = 0;
+            let queue = []; let wetCount = 0;
             for (let r = 0; r < ROWS; r++) { if (grid[r][0] === 0) { queue.push({r: r, c: 0}); grid[r][0] = 2; } }
 
             while (queue.length > 0) {
                 let curr = queue.shift(); wetCount++;
                 let dirs = [[0,1], [0,-1], [1,0], [-1,0]];
                 for (let d of dirs) {
-                    let nr = curr.r + d[0];
-                    let nc = curr.c + d[1];
-                    if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
-                        if (grid[nr][nc] === 0) { grid[nr][nc] = 2; queue.push({r: nr, c: nc}); }
+                    let nr = curr.r + d[0]; let nc = curr.c + d[1];
+                    if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc] === 0) {
+                        grid[nr][nc] = 2; queue.push({r: nr, c: nc});
                     }
                 }
             }
-            let flowScore = Math.min(100, Math.floor((wetCount / (COLS * ROWS * 0.65)) * 100)); 
-            let bioScore = 0;
-            if (flowScore > 15) bioScore = Math.floor(flowScore * 0.8);
-            if (flowScore > 75) bioScore = Math.floor(flowScore * 1.1); 
-            if (bioScore > 100) bioScore = 100;
-
-            updateUI(flowScore, bioScore);
+            flowPercent = Math.min(100, Math.floor((wetCount / (COLS * ROWS * 0.65)) * 100)); 
+            document.getElementById('flow-text').innerText = flowPercent + "%";
             draw();
-            checkStoryTrigger(flowScore, bioScore); 
-        }
-        
-        function updateUI(flow, bio) {
-            state.flowPercent = flow;
-            state.bioPercent = bio;
-            document.getElementById('flow-bar').style.width = flow + "%";
-            document.getElementById('flow-text').innerText = flow + "%";
-            document.getElementById('bio-bar').style.width = bio + "%";
-            document.getElementById('bio-text').innerText = bio + "%";
-        }
-
-        function checkStoryTrigger(flow, bio) {
-            if (flow >= 10 && state.milestones.hintTimerActive) {
-                clearTimeout(hintTimerId);
-                state.milestones.hintTimerActive = false;
-                hintTimerId = null;
-            }
             
-            if (flow > 5 && !state.milestones.firstClear) {
-                setDialogue('fish', "哇！水流進來了！動作挺俐落的嘛。不過別停，要繼續往右邊打通喔！");
-                state.milestones.firstClear = true;
-            }
-            if (flow > 40 && !state.milestones.halfway) {
-                setDialogue('oyster', "太棒了！新鮮的海水流進大半個泥灘了！大家快回來呀！！");
-                state.milestones.halfway = true;
-            }
-            if (flow >= 100 && bio >= 100 && !state.milestones.finish) { 
-                setDialogue('bird', "水來了，招潮蟹和食物都回來了！我們高蹺鴴終於又有舒服的泥灘可以覓食了，謝謝你！");
-                state.milestones.finish = true;
-                setTimeout(() => {
-                    document.getElementById('win-overlay').style.display = 'flex';
-                }, 1500); 
+            if (flowPercent >= 100) {
+                document.getElementById('btn-next-2').style.display = 'block';
             }
         }
 
-        function setDialogue(charKey, text) {
-            if (currentTypeWriterInterval) {
-                clearInterval(currentTypeWriterInterval);
-            }
+        // ==========================================
+        // 關卡二：尋寶遊戲 (點擊互動)
+        // ==========================================
+        let foundCount = 0;
+        function initFindGame() {
+            const area = document.getElementById('mudflat-game');
+            area.innerHTML = ''; // 清空
+            foundCount = 0;
+            document.getElementById('found-count').innerText = "0";
+            document.getElementById('btn-next-3').style.display = 'none';
 
-            const char = characters[charKey];
-            const avatarEl = document.getElementById('char-avatar');
-            const nameEl = document.getElementById('char-name');
-            
-            avatarEl.innerText = char.icon;
-            avatarEl.style.borderColor = char.color;
-            nameEl.innerText = char.name;
-            nameEl.style.color = char.color;
-            
-            const textEl = document.getElementById('char-text');
-            textEl.innerText = ""; 
-            let i = 0;
+            const targets = [
+                { icon: '🦀', id: 't1' }, { icon: '🦀', id: 't2' }, 
+                { icon: '🦀', id: 't3' }, { icon: '🛡️', id: 't4' }
+            ];
 
-            currentTypeWriterInterval = setInterval(() => {
-                if (i < text.length) {
-                    textEl.innerText += text.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(currentTypeWriterInterval);
-                    currentTypeWriterInterval = null; 
-                }
-            }, 25);
+            targets.forEach(t => {
+                const el = document.createElement('div');
+                el.className = 'hidden-animal';
+                el.innerText = t.icon;
+                // 隨機位置 (避開邊緣)
+                el.style.left = (10 + Math.random() * 70) + '%';
+                el.style.top = (10 + Math.random() * 70) + '%';
+                
+                el.onclick = function() {
+                    if (!this.classList.contains('found')) {
+                        this.classList.add('found');
+                        foundCount++;
+                        document.getElementById('found-count').innerText = foundCount;
+                        if (foundCount >= 4) {
+                            document.getElementById('btn-next-3').style.display = 'block';
+                        }
+                    }
+                };
+                area.appendChild(el);
+            });
         }
 
-        // 綁定遊戲事件
-        document.getElementById('start-game-btn').addEventListener('click', () => {
-            document.getElementById('info-overlay').style.display = 'none'; 
-            startGame(); 
-        });
-        
-        document.getElementById('hint-confirm-btn').addEventListener('click', () => {
-            document.getElementById('hint-modal').style.display = 'none';
-        });
-
-        canvas.addEventListener('mousedown', () => isDragging = true);
-        canvas.addEventListener('mouseup', () => isDragging = false);
-        canvas.addEventListener('mousemove', handleInput);
-        canvas.addEventListener('touchstart', (e) => { isDragging = true; handleInput(e); }, { passive: false });
-        canvas.addEventListener('touchend', () => isDragging = false);
-        canvas.addEventListener('touchmove', handleInput, { passive: false });
-        
-        window.addEventListener('resize', resizeCanvas);
+        // ==========================================
+        // 關卡三：戶外打卡
+        // ==========================================
+        function toggleCheck(element) {
+            element.classList.toggle('checked');
+            // 檢查是否全部打勾
+            const total = document.querySelectorAll('.check-item').length;
+            const checked = document.querySelectorAll('.check-item.checked').length;
+            if (checked === total) {
+                document.getElementById('btn-finish').style.display = 'block';
+            } else {
+                document.getElementById('btn-finish').style.display = 'none';
+            }
+        }
 
     </script>
 </body>
