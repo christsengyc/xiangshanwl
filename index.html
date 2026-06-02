@@ -35,6 +35,7 @@
         .info-card h3 { color: var(--primary-blue); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
         .info-card p, .info-card li { font-size: 0.95rem; line-height: 1.6; color: #444; margin-bottom: 8px; }
         .link-btn { display: inline-block; background: #ebf8ff; color: #2b6cb0; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold; margin-top: 5px; margin-right: 5px; border: 1px solid #bee3f8; }
+        .text-link { color: var(--accent-blue); text-decoration: underline; font-weight: bold; }
 
         /* 闖關容器 */
         .game-wrapper { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
@@ -97,7 +98,6 @@
         <p style="margin:0; font-size: 0.8rem; color: #bdc3c7;">珍古德保育基金會 根與芽行動</p>
     </header>
 
-    <!-- 頂部導航切換 -->
     <nav>
         <button id="nav-game" class="active" onclick="switchMainTab('tab-game')">🎮 生態闖關</button>
         <button id="nav-info" onclick="switchMainTab('tab-info')">ℹ️ 服務與交通</button>
@@ -105,14 +105,13 @@
 
     <div class="container">
 
-        <!-- ================= 服務與交通資訊頁籤 ================= -->
         <div id="tab-info" class="main-tab">
             <div class="info-card">
                 <h3>🏛️ 館內與周邊服務</h3>
                 <p>📍 <strong>地址：</strong>新竹市香山區大庄里西濱路三段500巷17號</p>
                 <p>📞 <strong>電話：</strong>03-5216121 分機 480</p>
                 <p>💧 <strong>飲水機位置：</strong>位於外面右手邊販賣商品的小房間，歡迎自備水壺補充水分。</p>
-                <p>🚻 <strong>洗手間：</strong>為避免館內擁擠，請大家多加利用館外設立的公共廁所喔！</p>
+                <p>🚻 <strong>洗手間：</strong>館內設有洗手間，但為避免擁擠，建議大家多加利用館外設立的公共廁所喔！</p>
             </div>
 
             <div class="info-card">
@@ -124,25 +123,23 @@
 
             <div class="info-card" style="border-left-color: #9b59b6;">
                 <h3>🚌 交通與接駁指引</h3>
-                <p><strong>路線一：搭乘至「大庄站」</strong> (下車後步行或騎乘 YouBike 約 550 公尺即可抵達)</p>
+                <p><strong>路線一：搭乘至「大庄站」</strong> (下車後步行或騎乘 <a href="https://share.google/FXzbgQjtVtbUhROoM" target="_blank" class="text-link">YouBike</a> 約 550 公尺即可抵達)</p>
                 <ul style="padding-left: 20px; list-style-type: none;">
-                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=58010&rn=1692006217229" target="_blank" class="link-btn">5801 路線公車</a></li>
-                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=58030&rn=1780398687632&lan=C" target="_blank" class="link-btn">5803 路線公車</a></li>
-                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=58070&rn=1780398710043&lan=C" target="_blank" class="link-btn">5807 路線公車</a></li>
-                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=58230&rn=1780398775392&lan=C" target="_blank" class="link-btn">5823 路線公車</a></li>
+                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=58010&rn=1692006217229" target="_blank" class="link-btn">5801 路線公車動態</a></li>
+                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=58030&rn=1780398687632&lan=C" target="_blank" class="link-btn">5803 路線公車動態</a></li>
+                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=58070&rn=1780398710043&lan=C" target="_blank" class="link-btn">5807 路線公車動態</a></li>
+                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=58230&rn=1780398775392&lan=C" target="_blank" class="link-btn">5823 路線公車動態</a></li>
                 </ul>
-                <p style="margin-top: 15px;"><strong>路線二：搭乘至「聖公宮」</strong> (下車後步行約 500 公尺即可抵達)</p>
+                <p style="margin-top: 15px;"><strong>路線二：搭乘至「聖公宮」</strong> (下車後步行或騎乘 <a href="https://share.google/FXzbgQjtVtbUhROoM" target="_blank" class="text-link">YouBike</a> 約 500 公尺即可抵達)</p>
                 <ul style="padding-left: 20px; list-style-type: none;">
-                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=05750&rn=1780398906700&lan=C" target="_blank" class="link-btn">世博 5 號公車</a></li>
+                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=05750&rn=1780398906700&lan=C" target="_blank" class="link-btn">世博 5 號公車動態</a></li>
                 </ul>
             </div>
         </div>
 
 
-        <!-- ================= 闖關任務頁籤 ================= -->
         <div id="tab-game" class="main-tab active">
             <div class="game-wrapper">
-                <!-- 進度條 -->
                 <div class="progress-indicator">
                     <div class="step active" id="step-0">0</div>
                     <div class="step" id="step-1">1</div>
@@ -150,7 +147,6 @@
                     <div class="step" id="step-3">3</div>
                 </div>
 
-                <!-- 首頁：任務簡報 -->
                 <div id="stage-0" class="stage-content active">
                     <h2>🌍 歡迎加入守護者行列</h2>
                     <p>為了讓各位了解這片美麗泥灘地的故事，我們準備了三個挑戰任務。</p>
@@ -161,7 +157,6 @@
                     <button class="btn" onclick="goToStage(1)">接受任務，開始第一關！</button>
                 </div>
 
-                <!-- 第一關：歷史與環境教育 -->
                 <div id="stage-1" class="stage-content">
                     <h2>關卡一：回到 2015，解決生態危機</h2>
                     <p><strong>歷史回顧：</strong>過去為防風大量種植紅樹林，卻導致林地過密、泥灘微棲地消失，招潮蟹的家不見了！</p>
@@ -175,7 +170,6 @@
                     <button class="btn btn-success" id="btn-next-2" style="display: none;" onclick="goToStage(2)">🎉 復育成功！前往下一關</button>
                 </div>
 
-                <!-- 第二關：生態互動 -->
                 <div id="stage-2" class="stage-content">
                     <h2>關卡二：生機重現，尋找泥灘明星</h2>
                     <p>太棒了！因為你清除了過密的紅樹林，海水重新滋潤了泥灘地，生物們都回來了。</p>
@@ -185,13 +179,11 @@
                     <button class="btn btn-success" id="btn-next-3" style="display: none;" onclick="goToStage(3)">🎉 尋寶完成！準備前往戶外</button>
                 </div>
 
-                <!-- 第三關：館外活動與無人問答查核 -->
                 <div id="stage-3" class="stage-content">
                     <h2>關卡三：走出館外，生態微觀察</h2>
                     <p>生態保育不能只在螢幕上！現在，請帶著你的手機步出大門，前往<strong>賞蟹步道</strong>，並完成以下的自我驗證任務：</p>
 
                     <div class="checklist">
-                        <!-- 點擊打卡 -->
                         <div class="check-item clickable" id="task-a" onclick="toggleCheckSimple('task-a')">
                             <div class="check-circle"></div>
                             <div>
@@ -200,7 +192,6 @@
                             </div>
                         </div>
                         
-                        <!-- 點擊打卡 -->
                         <div class="check-item clickable" id="task-b" onclick="toggleCheckSimple('task-b')">
                             <div class="check-circle"></div>
                             <div>
@@ -209,7 +200,6 @@
                             </div>
                         </div>
 
-                        <!-- 知識問答打卡 (取代拍照給工作人員看) -->
                         <div class="check-item" id="task-c">
                             <div class="check-circle" id="task-c-circle"></div>
                             <div style="width: 100%;">
@@ -229,7 +219,6 @@
                     <button class="btn btn-success" id="btn-finish" style="display: none; margin-top: 20px;" onclick="goToStage(4)">領取打卡明信片 ➔</button>
                 </div>
 
-                <!-- 完賽證明：數位打卡明信片 -->
                 <div id="stage-4" class="stage-content">
                     <p style="text-align: center; color: var(--accent-green); font-weight: bold; margin-bottom: 5px;">🎉 恭喜完成所有任務！</p>
                     <p style="text-align: center; font-size: 0.85rem; color: #666;">長按下方圖片即可儲存至手機，分享你的保育足跡！</p>
