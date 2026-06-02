@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>香山濕地：生態守護者闖關任務</title>
+    <title>香山濕地：生態守護者與智慧導覽</title>
     <style>
         :root {
             --primary-blue: #003d5b;
@@ -17,33 +17,49 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif; }
         body { background-color: var(--bg-light); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; }
         
-        header { background-color: var(--primary-blue); color: white; padding: 15px 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .container { max-width: 800px; width: 100%; margin: 20px auto; padding: 20px; flex-grow: 1; background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        header { background-color: var(--primary-blue); color: white; padding: 15px 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
         
-        /* 關卡切換控制 */
+        /* 頂部主選單 */
+        nav { display: flex; background-color: var(--panel-dark); }
+        nav button { flex: 1; padding: 12px; border: none; background: none; color: #95a5a6; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        nav button.active { color: white; background-color: var(--accent-blue); border-bottom: 4px solid var(--accent-green); }
+
+        .container { max-width: 800px; width: 100%; margin: 15px auto; padding: 15px; flex-grow: 1; }
+        
+        /* 大分頁切換 */
+        .main-tab { display: none; }
+        .main-tab.active { display: block; animation: fadeIn 0.4s; }
+
+        /* 卡片樣式 (用於資訊區) */
+        .info-card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary-blue); }
+        .info-card h3 { color: var(--primary-blue); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .info-card p, .info-card li { font-size: 0.95rem; line-height: 1.6; color: #444; margin-bottom: 8px; }
+        .link-btn { display: inline-block; background: #ebf8ff; color: #2b6cb0; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold; margin-top: 5px; margin-right: 5px; border: 1px solid #bee3f8; }
+
+        /* 闖關容器 */
+        .game-wrapper { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .stage-content { display: none; animation: fadeIn 0.5s; }
         .stage-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         h2 { color: var(--primary-blue); margin-bottom: 15px; border-bottom: 3px solid var(--accent-green); padding-bottom: 5px; display: inline-block; }
-        p { line-height: 1.6; margin-bottom: 15px; }
+        p { line-height: 1.6; margin-bottom: 15px; font-size: 0.95rem; }
         
         .btn { background-color: var(--accent-blue); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.1rem; width: 100%; transition: 0.3s; margin-top: 10px; }
         .btn:hover { background-color: #2980b9; }
-        .btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
         .btn-success { background-color: var(--accent-green); }
 
         /* 關卡進度條 */
-        .progress-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; }
+        .progress-indicator { display: flex; justify-content: space-between; margin-bottom: 25px; position: relative; }
         .progress-indicator::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: #e0e0e0; z-index: 1; transform: translateY(-50%); }
-        .step { width: 30px; height: 30px; border-radius: 50%; background: #e0e0e0; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 2; position: relative; }
+        .step { width: 30px; height: 30px; border-radius: 50%; background: #e0e0e0; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 2; position: relative; font-size: 0.9rem;}
         .step.active { background: var(--accent-blue); box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
         .step.completed { background: var(--accent-green); }
 
         /* 遊戲一：清除紅樹林 */
         #game-container { position: relative; width: 100%; border: 3px solid #95a5a6; cursor: crosshair; aspect-ratio: 2.2 / 1; overflow: hidden; background-color: #8d6e63; border-radius: 6px; margin-bottom: 15px; }
         canvas { display: block; width: 100%; height: 100%; }
-        .hud { display: flex; justify-content: space-between; background: var(--panel-dark); color: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.9rem; }
+        .hud { display: flex; justify-content: space-between; background: var(--panel-dark); color: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; }
         
         /* 遊戲二：泥灘尋寶 */
         .mudflat-area { position: relative; width: 100%; aspect-ratio: 16 / 9; background: url('https://images.unsplash.com/photo-1621508654686-809730590ed8?auto=format&fit=crop&q=80&w=800') center/cover; border-radius: 8px; border: 3px solid var(--primary-blue); overflow: hidden; }
@@ -52,131 +68,210 @@
         .hidden-animal.found { pointer-events: none; filter: drop-shadow(0 0 10px yellow); animation: bounce 0.5s; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        /* 遊戲三：戶外打卡 */
+        /* 遊戲三：戶外打卡與問答 */
         .checklist { display: flex; flex-direction: column; gap: 15px; }
-        .check-item { background: #f8f9fa; border: 2px solid #e0e0e0; padding: 15px; border-radius: 8px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; }
+        .check-item { background: #f8f9fa; border: 2px solid #e0e0e0; padding: 15px; border-radius: 8px; display: flex; align-items: flex-start; gap: 15px; transition: 0.3s; }
+        .check-item.clickable { cursor: pointer; }
         .check-item.checked { border-color: var(--accent-green); background: #e8f8f5; }
-        .check-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #ccc; display: flex; align-items: center; justify-content: center; }
+        .check-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #ccc; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;}
         .check-item.checked .check-circle { background: var(--accent-green); border-color: var(--accent-green); }
         .check-item.checked .check-circle::after { content: '✓'; color: white; font-weight: bold; }
+        
+        /* 問答區 */
+        .quiz-options { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; width: 100%; }
+        .quiz-btn { background: white; border: 1px solid #ccc; padding: 8px; border-radius: 5px; text-align: left; cursor: pointer; transition: 0.2s; font-size: 0.9rem;}
+        .quiz-btn:hover { background: #f0f0f0; }
+        .quiz-feedback { font-size: 0.85rem; margin-top: 8px; font-weight: bold; }
 
-        /* 完賽證書 */
-        .certificate { text-align: center; border: 5px double var(--primary-blue); padding: 30px; background: #fffcf5; border-radius: 10px; }
+        /* 數位明信片獎勵 */
+        .postcard { position: relative; width: 100%; max-width: 400px; margin: 0 auto; background: #fffcf5; border: 1px solid #ddd; padding: 15px; box-shadow: 3px 3px 10px rgba(0,0,0,0.1); border-radius: 4px; }
+        .postcard-img { width: 100%; height: 200px; background: url('https://images.unsplash.com/photo-1621508654686-809730590ed8?auto=format&fit=crop&q=80&w=800') center/cover; border-radius: 4px; margin-bottom: 15px; border: 2px solid #eee;}
+        .stamp { position: absolute; top: 25px; right: 25px; width: 60px; height: 60px; border: 3px dashed #e74c3c; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #e74c3c; font-weight: bold; font-size: 0.8rem; transform: rotate(15deg); background: rgba(255,255,255,0.8); text-align: center; line-height: 1.2;}
+        .postcard-text { font-family: 'Kaiti', '標楷體', serif; color: #333; line-height: 1.8; font-size: 1.1rem; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🌊 香山濕地：生態守護者任務</h1>
-        <p style="margin:0; font-size: 0.9rem; color: #bdc3c7;">珍古德保育基金會 根與芽行動</p>
+        <h1 style="font-size: 1.2rem;">🌊 香山濕地海洋保育中心</h1>
+        <p style="margin:0; font-size: 0.8rem; color: #bdc3c7;">珍古德保育基金會 根與芽行動</p>
     </header>
 
+    <!-- 頂部導航切換 -->
+    <nav>
+        <button id="nav-game" class="active" onclick="switchMainTab('tab-game')">🎮 生態闖關</button>
+        <button id="nav-info" onclick="switchMainTab('tab-info')">ℹ️ 服務與交通</button>
+    </nav>
+
     <div class="container">
-        <div class="progress-indicator">
-            <div class="step active" id="step-0">0</div>
-            <div class="step" id="step-1">1</div>
-            <div class="step" id="step-2">2</div>
-            <div class="step" id="step-3">3</div>
+
+        <!-- ================= 服務與交通資訊頁籤 ================= -->
+        <div id="tab-info" class="main-tab">
+            <div class="info-card">
+                <h3>🏛️ 館內與周邊服務</h3>
+                <p>📍 <strong>地址：</strong>新竹市香山區大庄里西濱路三段500巷17號</p>
+                <p>📞 <strong>電話：</strong>03-5216121 分機 480</p>
+                <p>💧 <strong>飲水機位置：</strong>位於外面右手邊販賣商品的小房間，歡迎自備水壺補充水分。</p>
+                <p>🚻 <strong>洗手間：</strong>為避免館內擁擠，請大家多加利用館外設立的公共廁所喔！</p>
+            </div>
+
+            <div class="info-card">
+                <h3>🌤️ 天氣與潮汐資訊</h3>
+                <p>前往賞蟹步道前，請務必確認當地天氣與潮汐狀況，退潮時才是最佳觀賞時機！</p>
+                <a href="https://www.cwa.gov.tw/V8/C/W/Town/Town.html?TID=1001803" target="_blank" class="link-btn">☀️ 香山區即時天氣</a>
+                <a href="https://www.cwa.gov.tw/V8/C/M/Fishery/tide_30day_MOD/T001803.html" target="_blank" class="link-btn">🌊 香山 30 天潮汐預報</a>
+            </div>
+
+            <div class="info-card" style="border-left-color: #9b59b6;">
+                <h3>🚌 交通與接駁指引</h3>
+                <p><strong>路線一：搭乘至「大庄站」</strong> (下車後步行或騎乘 YouBike 約 550 公尺即可抵達)</p>
+                <ul style="padding-left: 20px; list-style-type: none;">
+                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=58010&rn=1692006217229" target="_blank" class="link-btn">5801 路線公車</a></li>
+                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=58030&rn=1780398687632&lan=C" target="_blank" class="link-btn">5803 路線公車</a></li>
+                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=58070&rn=1780398710043&lan=C" target="_blank" class="link-btn">5807 路線公車</a></li>
+                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=58230&rn=1780398775392&lan=C" target="_blank" class="link-btn">5823 路線公車</a></li>
+                </ul>
+                <p style="margin-top: 15px;"><strong>路線二：搭乘至「聖公宮」</strong> (下車後步行約 500 公尺即可抵達)</p>
+                <ul style="padding-left: 20px; list-style-type: none;">
+                    <li>🚍 <a href="https://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=05750&rn=1780398906700&lan=C" target="_blank" class="link-btn">世博 5 號公車</a></li>
+                </ul>
+            </div>
         </div>
 
-        <div id="stage-0" class="stage-content active">
-            <h2>🌍 歡迎加入守護者行列</h2>
-            <p>你好！這裡是香山濕地海洋保育中心。為了讓各位了解這片美麗泥灘地的故事，我們準備了三個挑戰任務。</p>
-            <p>你將回到過去解決歷史生態危機、在泥灘地尋找回歸的生物，最後親自踏上戶外的「賞蟹步道」完成實地勘查。</p>
-            <div style="background: #e8f8f5; padding: 15px; border-left: 4px solid var(--accent-green); margin-bottom: 20px;">
-                <strong>💡 任務目標：</strong> 完成三道關卡，獲取「根與芽」生態守護者數位證書！
-            </div>
-            <button class="btn" onclick="goToStage(1)">接受任務，開始第一關！</button>
-        </div>
 
-        <div id="stage-1" class="stage-content">
-            <h2>關卡一：回到 2015，解決生態危機</h2>
-            <p><strong>歷史回顧：</strong>過去為防風大量種植紅樹林，卻導致林地過密、泥灘微棲地消失，招潮蟹的家不見了！</p>
-            <p><strong>你的任務：</strong>化身保育志工，用手指/滑鼠拖曳清除畫面上過密的綠色紅樹林，打通讓藍色海水流動的通道！</p>
-            
-            <div class="hud">
-                <span>🌊 潮水流通率: <span id="flow-text">0%</span></span>
-                <span>🛠️ 工具: 生態鏟</span>
-            </div>
-            
-            <div id="game-container">
-                <canvas id="gameCanvas"></canvas>
-            </div>
-            
-            <button class="btn btn-success" id="btn-next-2" style="display: none;" onclick="goToStage(2)">🎉 復育成功！前往下一關</button>
-        </div>
-
-        <div id="stage-2" class="stage-content">
-            <h2>關卡二：生機重現，尋找泥灘明星</h2>
-            <p>太棒了！因為你清除了過密的紅樹林，海水重新滋潤了泥灘地，生物們都回來了。</p>
-            <p><strong>你的任務：</strong>請在下方泥灘地找出隱藏的 <strong>3 隻台灣招潮蟹 (🦀)</strong> 與 <strong>1 隻三疣鱟 (🛡️)</strong>。</p>
-            
-            <p style="font-weight: bold; color: var(--primary-blue);">已找到：<span id="found-count">0</span> / 4</p>
-            
-            <div class="mudflat-area" id="mudflat-game">
+        <!-- ================= 闖關任務頁籤 ================= -->
+        <div id="tab-game" class="main-tab active">
+            <div class="game-wrapper">
+                <!-- 進度條 -->
+                <div class="progress-indicator">
+                    <div class="step active" id="step-0">0</div>
+                    <div class="step" id="step-1">1</div>
+                    <div class="step" id="step-2">2</div>
+                    <div class="step" id="step-3">3</div>
                 </div>
 
-            <button class="btn btn-success" id="btn-next-3" style="display: none;" onclick="goToStage(3)">🎉 尋寶完成！準備前往戶外</button>
-        </div>
+                <!-- 首頁：任務簡報 -->
+                <div id="stage-0" class="stage-content active">
+                    <h2>🌍 歡迎加入守護者行列</h2>
+                    <p>為了讓各位了解這片美麗泥灘地的故事，我們準備了三個挑戰任務。</p>
+                    <p>你將回到過去解決歷史生態危機、在泥灘地尋找回歸的生物，最後親自踏上戶外的「賞蟹步道」完成實地勘查。</p>
+                    <div style="background: #e8f8f5; padding: 15px; border-left: 4px solid var(--accent-green); margin-bottom: 20px; font-size: 0.9rem;">
+                        <strong>💡 任務目標：</strong> 完成三道關卡，獲取專屬的「數位打卡明信片」！
+                    </div>
+                    <button class="btn" onclick="goToStage(1)">接受任務，開始第一關！</button>
+                </div>
 
-        <div id="stage-3" class="stage-content">
-            <h2>關卡三：走出館外，實地探索！</h2>
-            <p>生態保育不能只在螢幕上！現在，請帶著你的手機，步出保育中心大門，前往長達 250 公尺的<strong>賞蟹步道</strong>。</p>
-            <p><strong>你的任務：</strong>在步道上實際觀察，完成下列清單（點擊即可打勾）：</p>
+                <!-- 第一關：歷史與環境教育 -->
+                <div id="stage-1" class="stage-content">
+                    <h2>關卡一：回到 2015，解決生態危機</h2>
+                    <p><strong>歷史回顧：</strong>過去為防風大量種植紅樹林，卻導致林地過密、泥灘微棲地消失，招潮蟹的家不見了！</p>
+                    <p><strong>你的任務：</strong>化身保育志工，用手指/滑鼠拖曳清除畫面上過密的綠色紅樹林，打通讓藍色海水流動的通道！</p>
+                    
+                    <div class="hud">
+                        <span>🌊 潮水流通: <span id="flow-text">0%</span></span>
+                        <span>🛠️ 工具: 生態鏟</span>
+                    </div>
+                    <div id="game-container"><canvas id="gameCanvas"></canvas></div>
+                    <button class="btn btn-success" id="btn-next-2" style="display: none;" onclick="goToStage(2)">🎉 復育成功！前往下一關</button>
+                </div>
 
-            <div class="checklist">
-                <div class="check-item" onclick="toggleCheck(this)">
-                    <div class="check-circle"></div>
-                    <div>
-                        <strong>尋找白鰲大俠</strong>
-                        <div style="font-size: 0.85rem; color: #666;">在步道前半段泥灘，親眼看到揮舞大白鰲的招潮蟹。</div>
+                <!-- 第二關：生態互動 -->
+                <div id="stage-2" class="stage-content">
+                    <h2>關卡二：生機重現，尋找泥灘明星</h2>
+                    <p>太棒了！因為你清除了過密的紅樹林，海水重新滋潤了泥灘地，生物們都回來了。</p>
+                    <p><strong>你的任務：</strong>請在下方泥灘地找出隱藏的 <strong>3 隻台灣招潮蟹 (🦀)</strong> 與 <strong>1 隻三疣鱟 (🛡️)</strong>。</p>
+                    <p style="font-weight: bold; color: var(--primary-blue);">已找到：<span id="found-count">0</span> / 4</p>
+                    <div class="mudflat-area" id="mudflat-game"></div>
+                    <button class="btn btn-success" id="btn-next-3" style="display: none;" onclick="goToStage(3)">🎉 尋寶完成！準備前往戶外</button>
+                </div>
+
+                <!-- 第三關：館外活動與無人問答查核 -->
+                <div id="stage-3" class="stage-content">
+                    <h2>關卡三：走出館外，生態微觀察</h2>
+                    <p>生態保育不能只在螢幕上！現在，請帶著你的手機步出大門，前往<strong>賞蟹步道</strong>，並完成以下的自我驗證任務：</p>
+
+                    <div class="checklist">
+                        <!-- 點擊打卡 -->
+                        <div class="check-item clickable" id="task-a" onclick="toggleCheckSimple('task-a')">
+                            <div class="check-circle"></div>
+                            <div>
+                                <strong>尋找白鰲大俠</strong>
+                                <div style="font-size: 0.85rem; color: #666;">在步道前半段泥灘，親眼看到揮舞大白鰲的招潮蟹。 (點擊完成)</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 點擊打卡 -->
+                        <div class="check-item clickable" id="task-b" onclick="toggleCheckSimple('task-b')">
+                            <div class="check-circle"></div>
+                            <div>
+                                <strong>感受海風與潮汐</strong>
+                                <div style="font-size: 0.85rem; color: #666;">觀察目前的潮水是漲潮還是退潮，並承諾不將垃圾落海。(點擊完成)</div>
+                            </div>
+                        </div>
+
+                        <!-- 知識問答打卡 (取代拍照給工作人員看) -->
+                        <div class="check-item" id="task-c">
+                            <div class="check-circle" id="task-c-circle"></div>
+                            <div style="width: 100%;">
+                                <strong>🕵️ 生態微觀察 (任務解鎖)</strong>
+                                <div style="font-size: 0.85rem; color: #666; margin-bottom: 8px;">走到步道上，仔細觀察泥灘地上的「招潮蟹洞口」周圍，通常會佈滿什麼特殊的東西？</div>
+                                
+                                <div class="quiz-options" id="quiz-area">
+                                    <button class="quiz-btn" onclick="checkAnswer(this, false)">A. 許多閃閃發光的貝殼碎片</button>
+                                    <button class="quiz-btn" onclick="checkAnswer(this, true)">B. 一顆顆圓圓的小泥球 (擬糞)</button>
+                                    <button class="quiz-btn" onclick="checkAnswer(this, false)">C. 綠色的海藻與水草</button>
+                                </div>
+                                <div class="quiz-feedback" id="quiz-msg"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success" id="btn-finish" style="display: none; margin-top: 20px;" onclick="goToStage(4)">領取打卡明信片 ➔</button>
+                </div>
+
+                <!-- 完賽證明：數位打卡明信片 -->
+                <div id="stage-4" class="stage-content">
+                    <p style="text-align: center; color: var(--accent-green); font-weight: bold; margin-bottom: 5px;">🎉 恭喜完成所有任務！</p>
+                    <p style="text-align: center; font-size: 0.85rem; color: #666;">長按下方圖片即可儲存至手機，分享你的保育足跡！</p>
+                    
+                    <div class="postcard">
+                        <div class="stamp">任務<br>達成</div>
+                        <div class="postcard-img"></div>
+                        <div class="postcard-text">
+                            <strong>給熱愛自然的你：</strong><br>
+                            謝謝你今天拜訪香山濕地，與我們一起見證了紅樹林清除後的生機重現。<br>
+                            每一顆小泥球，每一隻招潮蟹，都是生態復原的奇蹟。<br>
+                            <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 10px; text-align: right;">- 珍古德保育基金會 敬上</span>
+                        </div>
                     </div>
                 </div>
-                <div class="check-item" onclick="toggleCheck(this)">
-                    <div class="check-circle"></div>
-                    <div>
-                        <strong>感受海風與潮汐</strong>
-                        <div style="font-size: 0.85rem; color: #666;">走到步道中段，觀察目前的潮水是漲潮還是退潮。</div>
-                    </div>
-                </div>
-                <div class="check-item" onclick="toggleCheck(this)">
-                    <div class="check-circle"></div>
-                    <div>
-                        <strong>不干擾承諾</strong>
-                        <div style="font-size: 0.85rem; color: #666;">我承諾不丟垃圾落海、不進入泥灘地踩踏鱟的棲地。</div>
-                    </div>
-                </div>
             </div>
-
-            <button class="btn btn-success" id="btn-finish" style="display: none; margin-top: 20px;" onclick="goToStage(4)">領取守護者證書</button>
         </div>
-
-        <div id="stage-4" class="stage-content">
-            <div class="certificate">
-                <h2 style="border: none;">🏆 根與芽生態守護者證書</h2>
-                <p>茲證明</p>
-                <h3 style="color: var(--accent-green); font-size: 2rem; margin: 10px 0;">優秀的探索者</h3>
-                <p>已成功完成香山濕地歷史復育、生態辨識與戶外實地勘查任務。</p>
-                <div style="font-size: 4rem; margin: 10px 0;">🦀 🌿 🛡️</div>
-                <p style="font-size: 0.9rem; color: #666;">珍古德保育基金會 敬發</p>
-            </div>
-            <p style="text-align: center; margin-top: 20px; font-size: 0.9rem;">您可以向櫃檯出示此畫面領取紀念小卡，或將此頁面截圖留念！</p>
-            <button class="btn" onclick="location.reload()">重新體驗</button>
-        </div>
-
     </div>
 
     <script>
+        // --- 頁籤切換邏輯 ---
+        function switchMainTab(tabId) {
+            document.querySelectorAll('.main-tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+            if(tabId === 'tab-game') {
+                document.getElementById('nav-game').classList.add('active');
+                if(currentStage === 1) setTimeout(resizeCanvas, 100);
+            } else {
+                document.getElementById('nav-info').classList.add('active');
+            }
+        }
+
         // --- 關卡控制系統 ---
         let currentStage = 0;
         
         function goToStage(stageNum) {
-            // 隱藏所有關卡
+            currentStage = stageNum;
             document.querySelectorAll('.stage-content').forEach(el => el.classList.remove('active'));
-            // 顯示目標關卡
             document.getElementById('stage-' + stageNum).classList.add('active');
             
-            // 更新進度條
             if (stageNum <= 3) {
                 document.querySelectorAll('.step').forEach((el, index) => {
                     if (index < stageNum) el.classList.add('completed');
@@ -185,7 +280,6 @@
                 });
             }
 
-            // 初始化特定關卡邏輯
             if (stageNum === 1) initCanvasGame();
             if (stageNum === 2) initFindGame();
         }
@@ -213,10 +307,8 @@
 
         function initCanvasGame() {
             if (gameCanvasInitialized) return;
-            grid = [];
-            flowPercent = 0;
+            grid = []; flowPercent = 0;
             document.getElementById('btn-next-2').style.display = 'none';
-
             for (let r = 0; r < ROWS; r++) {
                 let row = [];
                 for (let c = 0; c < COLS; c++) {
@@ -224,7 +316,6 @@
                 }
                 grid.push(row);
             }
-            
             canvas.addEventListener('mousedown', () => isDragging = true);
             canvas.addEventListener('mouseup', () => isDragging = false);
             canvas.addEventListener('mousemove', handleInput);
@@ -232,7 +323,6 @@
             canvas.addEventListener('touchend', () => isDragging = false);
             canvas.addEventListener('touchmove', handleInput, { passive: false });
             window.addEventListener('resize', resizeCanvas);
-            
             resizeCanvas(); 
             gameCanvasInitialized = true;
         }
@@ -249,10 +339,7 @@
             const row = Math.floor((clientY - rect.top) / dynamicGridSize);
             
             if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
-                if (grid[row][col] === 1) {
-                    grid[row][col] = 0; 
-                    updateSimulation(); 
-                }
+                if (grid[row][col] === 1) { grid[row][col] = 0; updateSimulation(); }
             }
         }
 
@@ -263,13 +350,9 @@
                 for (let c = 0; c < COLS; c++) {
                     const x = c * G; const y = r * G;
                     if (x + G > canvas.width || y + G > canvas.height) continue; 
-                    if (grid[r][c] === 1) {
-                        ctx.fillStyle = "#27ae60"; ctx.fillRect(x, y, G, G);
-                    } else if (grid[r][c] === 2) {
-                        ctx.fillStyle = "#3498db"; ctx.fillRect(x, y, G, G);
-                    } else {
-                        ctx.fillStyle = "#8d6e63"; ctx.fillRect(x, y, G, G);
-                    }
+                    if (grid[r][c] === 1) { ctx.fillStyle = "#27ae60"; ctx.fillRect(x, y, G, G); } 
+                    else if (grid[r][c] === 2) { ctx.fillStyle = "#3498db"; ctx.fillRect(x, y, G, G); } 
+                    else { ctx.fillStyle = "#8d6e63"; ctx.fillRect(x, y, G, G); }
                 }
             }
         }
@@ -292,19 +375,16 @@
             flowPercent = Math.min(100, Math.floor((wetCount / (COLS * ROWS * 0.65)) * 100)); 
             document.getElementById('flow-text').innerText = flowPercent + "%";
             draw();
-            
-            if (flowPercent >= 100) {
-                document.getElementById('btn-next-2').style.display = 'block';
-            }
+            if (flowPercent >= 100) document.getElementById('btn-next-2').style.display = 'block';
         }
 
         // ==========================================
-        // 關卡二：尋寶遊戲 (點擊互動)
+        // 關卡二：尋寶遊戲
         // ==========================================
         let foundCount = 0;
         function initFindGame() {
             const area = document.getElementById('mudflat-game');
-            area.innerHTML = ''; // 清空
+            area.innerHTML = ''; 
             foundCount = 0;
             document.getElementById('found-count').innerText = "0";
             document.getElementById('btn-next-3').style.display = 'none';
@@ -318,18 +398,14 @@
                 const el = document.createElement('div');
                 el.className = 'hidden-animal';
                 el.innerText = t.icon;
-                // 隨機位置 (避開邊緣)
                 el.style.left = (10 + Math.random() * 70) + '%';
                 el.style.top = (10 + Math.random() * 70) + '%';
-                
                 el.onclick = function() {
                     if (!this.classList.contains('found')) {
                         this.classList.add('found');
                         foundCount++;
                         document.getElementById('found-count').innerText = foundCount;
-                        if (foundCount >= 4) {
-                            document.getElementById('btn-next-3').style.display = 'block';
-                        }
+                        if (foundCount >= 4) document.getElementById('btn-next-3').style.display = 'block';
                     }
                 };
                 area.appendChild(el);
@@ -337,20 +413,52 @@
         }
 
         // ==========================================
-        // 關卡三：戶外打卡
+        // 關卡三：戶外打卡與自我驗證
         // ==========================================
-        function toggleCheck(element) {
-            element.classList.toggle('checked');
-            // 檢查是否全部打勾
-            const total = document.querySelectorAll('.check-item').length;
-            const checked = document.querySelectorAll('.check-item.checked').length;
-            if (checked === total) {
+        function toggleCheckSimple(id) {
+            document.getElementById(id).classList.toggle('checked');
+            checkAllTasksCompleted();
+        }
+
+        let quizPassed = false;
+        function checkAnswer(btn, isCorrect) {
+            if(quizPassed) return; // 已經答對就不再處理
+            
+            const msgEl = document.getElementById('quiz-msg');
+            if(isCorrect) {
+                // 答對了
+                btn.style.background = '#d5f5e3';
+                btn.style.borderColor = '#2ecc71';
+                msgEl.style.color = '#27ae60';
+                msgEl.innerText = '✅ 答對了！這些小泥球就是招潮蟹濾食後吐出來的「擬糞」喔！';
+                
+                // 將該項目打勾
+                document.getElementById('task-c').classList.add('checked');
+                document.getElementById('quiz-area').style.pointerEvents = 'none'; // 禁用按鈕
+                quizPassed = true;
+                checkAllTasksCompleted();
+            } else {
+                // 答錯了
+                btn.style.background = '#fadbd8';
+                btn.style.borderColor = '#e74c3c';
+                msgEl.style.color = '#c0392b';
+                msgEl.innerText = '❌ 好像不是這個喔，走到泥灘邊再仔細觀察一下洞口吧！';
+                setTimeout(() => { 
+                    btn.style.background = 'white'; 
+                    btn.style.borderColor = '#ccc'; 
+                    msgEl.innerText = '';
+                }, 2000);
+            }
+        }
+
+        function checkAllTasksCompleted() {
+            const checkedCount = document.querySelectorAll('.check-item.checked').length;
+            if (checkedCount === 3) {
                 document.getElementById('btn-finish').style.display = 'block';
             } else {
                 document.getElementById('btn-finish').style.display = 'none';
             }
         }
-
     </script>
 </body>
 </html>
