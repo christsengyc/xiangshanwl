@@ -62,27 +62,21 @@
         canvas { display: block; width: 100%; height: 100%; }
         .hud { display: flex; justify-content: space-between; background: var(--panel-dark); color: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; }
         
-        /* 遊戲二：泥灘尋寶 */
-        .mudflat-area { position: relative; width: 100%; aspect-ratio: 16 / 9; background: url('https://images.unsplash.com/photo-1621508654686-809730590ed8?auto=format&fit=crop&q=80&w=800') center/cover; border-radius: 8px; border: 3px solid var(--primary-blue); overflow: hidden; }
-        .hidden-animal { position: absolute; font-size: 2.5rem; cursor: pointer; transition: transform 0.2s; user-select: none; opacity: 0.9; }
-        .hidden-animal:hover { transform: scale(1.2); }
-        .hidden-animal.found { pointer-events: none; filter: drop-shadow(0 0 10px yellow); animation: bounce 0.5s; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-
-        /* 遊戲三：戶外打卡與問答 */
-        .checklist { display: flex; flex-direction: column; gap: 15px; }
-        .check-item { background: #f8f9fa; border: 2px solid #e0e0e0; padding: 15px; border-radius: 8px; display: flex; align-items: flex-start; gap: 15px; transition: 0.3s; }
-        .check-item.clickable { cursor: pointer; }
-        .check-item.checked { border-color: var(--accent-green); background: #e8f8f5; }
-        .check-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #ccc; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;}
-        .check-item.checked .check-circle { background: var(--accent-green); border-color: var(--accent-green); }
-        .check-item.checked .check-circle::after { content: '✓'; color: white; font-weight: bold; }
+        /* 遊戲二：館內解謎 */
+        .quiz-card { background: #f8f9fa; border: 2px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 15px; transition: 0.3s; }
+        .quiz-card.solved { border-color: var(--accent-green); background: #e8f8f5; }
+        .quiz-floor { background: var(--primary-blue); color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-right: 8px; }
+        .quiz-options { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .quiz-btn { background: white; border: 1px solid #cbd5e0; padding: 10px; border-radius: 6px; text-align: left; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        .quiz-btn:hover { background: #edf2f7; }
         
-        /* 問答區 */
-        .quiz-options { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; width: 100%; }
-        .quiz-btn { background: white; border: 1px solid #ccc; padding: 8px; border-radius: 5px; text-align: left; cursor: pointer; transition: 0.2s; font-size: 0.9rem;}
-        .quiz-btn:hover { background: #f0f0f0; }
-        .quiz-feedback { font-size: 0.85rem; margin-top: 8px; font-weight: bold; }
+        /* 遊戲三：戶外觀察任務 */
+        .task-card { background: white; border: 2px dashed #cbd5e0; border-radius: 10px; padding: 15px; margin-bottom: 15px; text-align: center; transition: 0.3s; }
+        .task-card.completed { border-style: solid; border-color: var(--accent-green); background: #e8f8f5; }
+        .task-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .task-action-btn { background: var(--accent-blue); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 0.9rem; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .task-action-btn:hover { transform: translateY(-2px); }
+        .task-card.completed .task-action-btn { background: var(--accent-green); pointer-events: none; }
 
         /* 數位明信片獎勵 */
         .postcard { position: relative; width: 100%; max-width: 400px; margin: 0 auto; background: #fffcf5; border: 1px solid #ddd; padding: 15px; box-shadow: 3px 3px 10px rgba(0,0,0,0.1); border-radius: 4px; }
@@ -137,7 +131,6 @@
             </div>
         </div>
 
-
         <div id="tab-game" class="main-tab active">
             <div class="game-wrapper">
                 <div class="progress-indicator">
@@ -150,7 +143,7 @@
                 <div id="stage-0" class="stage-content active">
                     <h2>🌍 歡迎加入守護者行列</h2>
                     <p>為了讓各位了解這片美麗泥灘地的故事，我們準備了三個挑戰任務。</p>
-                    <p>你將回到過去解決歷史生態危機、在泥灘地尋找回歸的生物，最後親自踏上戶外的「賞蟹步道」完成實地勘查。</p>
+                    <p>你將回到過去解決歷史生態危機、探索館內的三層樓展區尋找解答，最後親自踏上戶外的「賞蟹步道」完成實境觀察！</p>
                     <div style="background: #e8f8f5; padding: 15px; border-left: 4px solid var(--accent-green); margin-bottom: 20px; font-size: 0.9rem;">
                         <strong>💡 任務目標：</strong> 完成三道關卡，獲取專屬的「數位打卡明信片」！
                     </div>
@@ -171,52 +164,70 @@
                 </div>
 
                 <div id="stage-2" class="stage-content">
-                    <h2>關卡二：生機重現，尋找泥灘明星</h2>
-                    <p>太棒了！因為你清除了過密的紅樹林，海水重新滋潤了泥灘地，生物們都回來了。</p>
-                    <p><strong>你的任務：</strong>請在下方泥灘地找出隱藏的 <strong>3 隻台灣招潮蟹 (🦀)</strong> 與 <strong>1 隻三疣鱟 (🛡️)</strong>。</p>
-                    <p style="font-weight: bold; color: var(--primary-blue);">已找到：<span id="found-count">0</span> / 4</p>
-                    <div class="mudflat-area" id="mudflat-game"></div>
-                    <button class="btn btn-success" id="btn-next-3" style="display: none;" onclick="goToStage(3)">🎉 尋寶完成！準備前往戶外</button>
-                </div>
-
-                <div id="stage-3" class="stage-content">
-                    <h2>關卡三：走出館外，生態微觀察</h2>
-                    <p>生態保育不能只在螢幕上！現在，請帶著你的手機步出大門，前往<strong>賞蟹步道</strong>，並完成以下的自我驗證任務：</p>
-
-                    <div class="checklist">
-                        <div class="check-item clickable" id="task-a" onclick="toggleCheckSimple('task-a')">
-                            <div class="check-circle"></div>
-                            <div>
-                                <strong>尋找白鰲大俠</strong>
-                                <div style="font-size: 0.85rem; color: #666;">在步道前半段泥灘，親眼看到揮舞大白鰲的招潮蟹。 (點擊完成)</div>
-                            </div>
-                        </div>
-                        
-                        <div class="check-item clickable" id="task-b" onclick="toggleCheckSimple('task-b')">
-                            <div class="check-circle"></div>
-                            <div>
-                                <strong>感受海風與潮汐</strong>
-                                <div style="font-size: 0.85rem; color: #666;">觀察目前的潮水是漲潮還是退潮，並承諾不將垃圾落海。(點擊完成)</div>
-                            </div>
-                        </div>
-
-                        <div class="check-item" id="task-c">
-                            <div class="check-circle" id="task-c-circle"></div>
-                            <div style="width: 100%;">
-                                <strong>🕵️ 生態微觀察 (任務解鎖)</strong>
-                                <div style="font-size: 0.85rem; color: #666; margin-bottom: 8px;">走到步道上，仔細觀察泥灘地上的「招潮蟹洞口」周圍，通常會佈滿什麼特殊的東西？</div>
-                                
-                                <div class="quiz-options" id="quiz-area">
-                                    <button class="quiz-btn" onclick="checkAnswer(this, false)">A. 許多閃閃發光的貝殼碎片</button>
-                                    <button class="quiz-btn" onclick="checkAnswer(this, true)">B. 一顆顆圓圓的小泥球 (擬糞)</button>
-                                    <button class="quiz-btn" onclick="checkAnswer(this, false)">C. 綠色的海藻與水草</button>
-                                </div>
-                                <div class="quiz-feedback" id="quiz-msg"></div>
-                            </div>
+                    <h2>關卡二：館內尋寶解謎大挑戰</h2>
+                    <p>現在水流進來了，生物們也回來了！請親自走訪保育中心的 <strong>1到3樓展區</strong>，觀察展覽內容來回答以下三個問題解鎖任務：</p>
+                    
+                    <div class="quiz-card" id="q-floor1">
+                        <div><span class="quiz-floor">1F 展區</span> <strong>底棲蟹類與海保署執掌</strong></div>
+                        <p style="margin-top: 8px; font-size: 0.9rem; color: #444;">在1樓的「底棲蟹類模型」區，哪一種特有種螃蟹具有「雄蟹揮舞單邊大螯」的明顯特徵？</p>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" onclick="checkIndoorQuiz('q-floor1', this, false)">A. 短腕和尚蟹</button>
+                            <button class="quiz-btn" onclick="checkIndoorQuiz('q-floor1', this, true)">B. 台灣招潮蟹</button>
+                            <button class="quiz-btn" onclick="checkIndoorQuiz('q-floor1', this, false)">C. 萬歲大眼蟹</button>
                         </div>
                     </div>
 
-                    <button class="btn btn-success" id="btn-finish" style="display: none; margin-top: 20px;" onclick="goToStage(4)">領取打卡明信片 ➔</button>
+                    <div class="quiz-card" id="q-floor2">
+                        <div><span class="quiz-floor">2F 展區</span> <strong>四季生態與活化石</strong></div>
+                        <p style="margin-top: 8px; font-size: 0.9rem; color: #444;">來到2樓，你會看到一種擁有超過四億年歷史，被稱為「活化石」的珍貴海洋生物，牠的名字是？</p>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" onclick="checkIndoorQuiz('q-floor2', this, false)">A. 腔棘魚</button>
+                            <button class="quiz-btn" onclick="checkIndoorQuiz('q-floor2', this, false)">B. 鸚鵡螺</button>
+                            <button class="quiz-btn" onclick="checkIndoorQuiz('q-floor2', this, true)">C. 三棘鱟 (ㄏㄡˋ)</button>
+                        </div>
+                    </div>
+
+                    <div class="quiz-card" id="q-floor3">
+                        <div><span class="quiz-floor">3F 特展區</span> <strong>當期主題特展</strong></div>
+                        <p style="margin-top: 8px; font-size: 0.9rem; color: #444;">爬上3樓的特展區，這裡目前正在展出哪位致力於黑猩猩研究，並推動「根與芽」計畫的保育大使的故事？</p>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" onclick="checkIndoorQuiz('q-floor3', this, true)">A. 珍古德 (Jane Goodall)</button>
+                            <button class="quiz-btn" onclick="checkIndoorQuiz('q-floor3', this, false)">B. 瑞秋·卡森 (Rachel Carson)</button>
+                            <button class="quiz-btn" onclick="checkIndoorQuiz('q-floor3', this, false)">C. 瑪麗·居禮 (Marie Curie)</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success" id="btn-next-3" style="display: none;" onclick="goToStage(3)">🎉 解謎成功！準備走出戶外</button>
+                </div>
+
+                <div id="stage-3" class="stage-content">
+                    <h2>關卡三：走出戶外，實境觀測任務</h2>
+                    <p>生態保育不能只在螢幕上！現在，請帶著你的手機步出保育中心大門，前往長達 250 公尺的<strong>賞蟹步道</strong>，並點擊下方按鈕紀錄你的觀察：</p>
+
+                    <div id="outdoor-tasks-container">
+                        <div class="task-card" id="task-tide">
+                            <div class="task-icon">🌊</div>
+                            <h4 style="color: var(--primary-blue); margin-bottom: 5px;">觀測任務 1：水落石出</h4>
+                            <p style="font-size: 0.85rem; color: #555;">走到步道中段，觀察目前的潮汐狀況。<br>泥灘地現在是露出還是被海水淹沒的？</p>
+                            <button class="task-action-btn" onclick="completeOutdoorTask('task-tide', '📸 潮汐狀態已紀錄！')">📸 紀錄目前潮汐</button>
+                        </div>
+
+                        <div class="task-card" id="task-mud">
+                            <div class="task-icon">🔍</div>
+                            <h4 style="color: var(--primary-blue); margin-bottom: 5px;">觀測任務 2：尋找螃蟹的蹤跡</h4>
+                            <p style="font-size: 0.85rem; color: #555;">往下看泥灘地。你有沒有看到一顆顆像小珍珠一樣的泥球？那是招潮蟹濾食後吐出來的「擬糞」喔！</p>
+                            <button class="task-action-btn" onclick="completeOutdoorTask('task-mud', '✅ 我發現擬糞了！')">🔍 掃描尋找擬糞</button>
+                        </div>
+
+                        <div class="task-card" id="task-bird">
+                            <div class="task-icon">🎧</div>
+                            <h4 style="color: var(--primary-blue); margin-bottom: 5px;">觀測任務 3：風與候鳥的對話</h4>
+                            <p style="font-size: 0.85rem; color: #555;">香山濕地是重要的候鳥驛站（如1樓電視牆所示）。請閉上眼睛聆聽海風，或在天空中找尋鳥兒的身影。</p>
+                            <button class="task-action-btn" onclick="completeOutdoorTask('task-bird', '🕊️ 完成自然聆聽！')">🎧 開始環境聆聽</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success" id="btn-finish" style="display: none; margin-top: 20px;" onclick="goToStage(4)">任務全數達成！領取獎勵 ➔</button>
                 </div>
 
                 <div id="stage-4" class="stage-content">
@@ -270,7 +281,6 @@
             }
 
             if (stageNum === 1) initCanvasGame();
-            if (stageNum === 2) initFindGame();
         }
 
         // ==========================================
@@ -368,86 +378,68 @@
         }
 
         // ==========================================
-        // 關卡二：尋寶遊戲
+        // 關卡二：館內解謎 (1F, 2F, 3F)
         // ==========================================
-        let foundCount = 0;
-        function initFindGame() {
-            const area = document.getElementById('mudflat-game');
-            area.innerHTML = ''; 
-            foundCount = 0;
-            document.getElementById('found-count').innerText = "0";
-            document.getElementById('btn-next-3').style.display = 'none';
+        let indoorSolvedCount = 0;
+        function checkIndoorQuiz(cardId, btnEl, isCorrect) {
+            const card = document.getElementById(cardId);
+            if (card.classList.contains('solved')) return; // 已經答對就不再處理
 
-            const targets = [
-                { icon: '🦀', id: 't1' }, { icon: '🦀', id: 't2' }, 
-                { icon: '🦀', id: 't3' }, { icon: '🛡️', id: 't4' }
-            ];
-
-            targets.forEach(t => {
-                const el = document.createElement('div');
-                el.className = 'hidden-animal';
-                el.innerText = t.icon;
-                el.style.left = (10 + Math.random() * 70) + '%';
-                el.style.top = (10 + Math.random() * 70) + '%';
-                el.onclick = function() {
-                    if (!this.classList.contains('found')) {
-                        this.classList.add('found');
-                        foundCount++;
-                        document.getElementById('found-count').innerText = foundCount;
-                        if (foundCount >= 4) document.getElementById('btn-next-3').style.display = 'block';
-                    }
-                };
-                area.appendChild(el);
-            });
-        }
-
-        // ==========================================
-        // 關卡三：戶外打卡與自我驗證
-        // ==========================================
-        function toggleCheckSimple(id) {
-            document.getElementById(id).classList.toggle('checked');
-            checkAllTasksCompleted();
-        }
-
-        let quizPassed = false;
-        function checkAnswer(btn, isCorrect) {
-            if(quizPassed) return; // 已經答對就不再處理
-            
-            const msgEl = document.getElementById('quiz-msg');
-            if(isCorrect) {
-                // 答對了
-                btn.style.background = '#d5f5e3';
-                btn.style.borderColor = '#2ecc71';
-                msgEl.style.color = '#27ae60';
-                msgEl.innerText = '✅ 答對了！這些小泥球就是招潮蟹濾食後吐出來的「擬糞」喔！';
+            if (isCorrect) {
+                // 答對處理
+                btnEl.style.background = '#d5f5e3';
+                btnEl.style.borderColor = '#2ecc71';
+                btnEl.innerHTML += ' ✅';
+                card.classList.add('solved');
                 
-                // 將該項目打勾
-                document.getElementById('task-c').classList.add('checked');
-                document.getElementById('quiz-area').style.pointerEvents = 'none'; // 禁用按鈕
-                quizPassed = true;
-                checkAllTasksCompleted();
+                // 禁用其他按鈕
+                const buttons = card.querySelectorAll('.quiz-btn');
+                buttons.forEach(b => { b.style.pointerEvents = 'none'; });
+
+                indoorSolvedCount++;
+                if (indoorSolvedCount >= 3) {
+                    document.getElementById('btn-next-3').style.display = 'block';
+                }
             } else {
-                // 答錯了
-                btn.style.background = '#fadbd8';
-                btn.style.borderColor = '#e74c3c';
-                msgEl.style.color = '#c0392b';
-                msgEl.innerText = '❌ 好像不是這個喔，走到泥灘邊再仔細觀察一下洞口吧！';
-                setTimeout(() => { 
-                    btn.style.background = 'white'; 
-                    btn.style.borderColor = '#ccc'; 
-                    msgEl.innerText = '';
-                }, 2000);
+                // 答錯處理
+                const originalText = btnEl.innerHTML;
+                btnEl.style.background = '#fadbd8';
+                btnEl.style.borderColor = '#e74c3c';
+                btnEl.innerHTML += ' ❌';
+                setTimeout(() => {
+                    btnEl.style.background = 'white';
+                    btnEl.style.borderColor = '#cbd5e0';
+                    btnEl.innerHTML = originalText;
+                }, 1000);
             }
         }
 
-        function checkAllTasksCompleted() {
-            const checkedCount = document.querySelectorAll('.check-item.checked').length;
-            if (checkedCount === 3) {
-                document.getElementById('btn-finish').style.display = 'block';
-            } else {
-                document.getElementById('btn-finish').style.display = 'none';
-            }
+        // ==========================================
+        // 關卡三：戶外觀測任務 (情境按鈕)
+        // ==========================================
+        let outdoorCompletedCount = 0;
+        function completeOutdoorTask(cardId, successText) {
+            const card = document.getElementById(cardId);
+            if(card.classList.contains('completed')) return;
+
+            const btn = card.querySelector('.task-action-btn');
+            
+            // 模擬載入或動作的感覺
+            btn.innerHTML = "⏳ 觀測記錄中...";
+            btn.style.opacity = "0.8";
+
+            setTimeout(() => {
+                card.classList.add('completed');
+                btn.innerHTML = successText;
+                btn.style.opacity = "1";
+                
+                outdoorCompletedCount++;
+                if (outdoorCompletedCount >= 3) {
+                    document.getElementById('btn-finish').style.display = 'block';
+                }
+            }, 800); // 模擬 0.8 秒的動作延遲，增加儀式感
         }
+
     </script>
 </body>
 </html>
