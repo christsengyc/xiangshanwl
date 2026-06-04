@@ -66,9 +66,9 @@
         
         .hud { display: flex; justify-content: space-between; background: var(--panel-dark); color: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; }
         
-        /* 遊戲一提示框與通關視窗 */
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 10; display: none; border-radius: 4px;}
-        .hint-content { background: var(--panel-dark); color: white; padding: 20px; border-radius: 10px; border: 2px solid #f39c12; max-width: 90%; text-align: center; }
+        /* ★ 修正：遊戲一提示框與通關視窗 (改為 fixed 蓋滿全螢幕，並加入捲軸) */
+        .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 9999; display: none; }
+        .hint-content { background: var(--panel-dark); color: white; padding: 25px 20px; border-radius: 12px; border: 2px solid #f39c12; width: 90%; max-width: 400px; text-align: center; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
 
         /* 遊戲二：館內解謎 */
         .quiz-card { background: #f8f9fa; border: 2px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 15px; transition: 0.3s; }
@@ -125,6 +125,7 @@
 
     <div class="container">
 
+        <!-- ================= 服務與交通資訊頁籤 ================= -->
         <div id="tab-info" class="main-tab">
             <div class="info-card">
                 <h3>🏛️ 館內與周邊服務</h3>
@@ -157,8 +158,10 @@
             </div>
         </div>
 
+        <!-- ================= 闖關任務頁籤 ================= -->
         <div id="tab-game" class="main-tab active">
             <div class="game-wrapper">
+                <!-- 進度條 -->
                 <div class="progress-indicator">
                     <div class="step active" id="step-0">0</div>
                     <div class="step" id="step-1">1</div>
@@ -167,6 +170,7 @@
                     <div class="step" id="step-4">4</div>
                 </div>
 
+                <!-- 階段 0：首頁簡報 -->
                 <div id="stage-0" class="stage-content active">
                     <h2>🌍 歡迎加入守護者行列</h2>
                     <p>你將解決歷史生態危機、探索館內展區尋找解答，最後親自踏上戶外的「賞蟹步道」拍下實境美景！</p>
@@ -176,9 +180,11 @@
                     <button class="btn" onclick="goToStage(1)">接受任務，開始第一關！</button>
                 </div>
 
+                <!-- 階段 1：歷史與環境教育 (精簡排版版) -->
                 <div id="stage-1" class="stage-content">
                     <h2>關卡一：解決生態危機</h2>
                     
+                    <!-- 簡述遊戲任務 -->
                     <p style="font-size: 0.95rem; margin-bottom: 10px; background: #fdf2e9; padding: 12px; border-left: 4px solid #e67e22; border-radius: 4px;">
                         <strong>🎮 任務說明：</strong>本關卡模擬香山濕地的紅樹林清除行動。請化身保育志工，<strong>用手指拖曳清除「綠色紅樹林」</strong>，打通讓藍色海水流動的通道！
                     </p>
@@ -196,30 +202,12 @@
                     
                     <div id="game-container">
                         <canvas id="gameCanvas"></canvas>
-                        
-                        <div class="overlay" id="hint-modal">
-                            <div class="hint-content">
-                                <h3 style="color:#f39c12; margin-bottom:10px;">💡 溫馨提示</h3>
-                                <p style="font-size: 0.9rem; line-height: 1.5;">水流好像沒有前進喔！<br>請確認你清除的地方，有讓最左側的「藍色潮水」順利連通流進來喔！</p>
-                                <button class="btn" style="background:#f39c12; margin-top:15px; padding: 8px;" onclick="closeHint()">我知道了</button>
-                            </div>
-                        </div>
-
-                        <div class="overlay" id="history-modal">
-                            <div class="hint-content" style="border-color: var(--accent-green);">
-                                <h3 style="color:var(--accent-green); margin-bottom:10px;">🎉 復育成功！</h3>
-                                <div style="font-size: 0.9rem; line-height: 1.6; text-align: left; margin-bottom: 15px; background: #f8f9fa; padding: 12px; border-radius: 6px; color:#333;">
-                                    <strong>📖 歷史回顧：</strong><br>在 1990 年代，為防風定砂，香山濕地曾被大量種植紅樹林。然而這些植物過度蔓延，阻擋排洪、破壞泥灘微棲地，甚至引發小黑蚊危機。<br><br>
-                                    <strong>🌱 復育行動：</strong><br>為拯救生態，市府與保育團體展開史無前例的大面積拔除行動，清除了 300 多公頃過密紅樹林，才讓美麗的底棲生物與水鳥重新回歸！
-                                </div>
-                                <button class="btn btn-success" onclick="goToStage(2)">前往下一關 ➔</button>
-                            </div>
-                        </div>
                     </div>
-                    
+
                     <p style="font-size:0.8rem; color:#666; text-align:center; margin-top: 5px;">💡 提示：當水流達到 70% 以上時，泥灘地會有生物跑出來喔！</p>
                 </div>
 
+                <!-- 階段 2：館內解謎 -->
                 <div id="stage-2" class="stage-content">
                     <h2>關卡二：館內尋寶解謎大挑戰</h2>
                     <p>水流進來了，生物也回來了！請走訪保育中心的 <strong>1到3樓展區</strong>，找出以下 6 道題目的答案：</p>
@@ -293,9 +281,11 @@
                         <div class="eco-fact"></div>
                     </div>
 
+                    <!-- 必須答對 6 題才會顯示 -->
                     <button class="btn btn-success" id="btn-next-3" style="display: none;" onclick="goToStage(3)">🎉 館內解謎全數通關！準備邁向戶外</button>
                 </div>
 
+                <!-- 階段 3：戶外行前裝備與路線確認 -->
                 <div id="stage-3" class="stage-content">
                     <h2>關卡三：整裝出發，邁向賞蟹步道</h2>
                     <p>館內任務完成囉！接下來我們即將前往「賞蟹步道」。由於戶外較無遮蔽物，請先確認裝備與路線：</p>
@@ -331,6 +321,7 @@
                     <button class="btn btn-success" id="btn-next-4" style="display: none;" onclick="goToStage(4)">✅ 裝備確認完畢！正式出發 ➔</button>
                 </div>
 
+                <!-- 階段 4：戶外相機實境紀錄 -->
                 <div id="stage-4" class="stage-content">
                     <h2>關卡四：實境觀測與拍攝紀錄</h2>
                     <p>歡迎來到賞蟹步道！走在步道上，仔細尋找招潮蟹揮舞的大螯、地上的擬糞泥球，或是美麗的夕陽與候鳥。</p>
@@ -340,6 +331,7 @@
                         <h4 style="color: var(--primary-blue); margin-bottom: 5px;">終極任務：拍下濕地之美</h4>
                         <p style="font-size: 0.85rem; color: #555;">請點擊按鈕，從相簿挑選剛拍好的風景，或直接開啟相機拍下小生物！這張照片將成為你的專屬明信片。</p>
                         
+                        <!-- 拿掉 capture="environment" 讓瀏覽器優先跳出圖片/相機選擇器 -->
                         <input type="file" id="camera-input" accept="image/*" style="display: none;" onchange="handlePhotoUpload(event)">
                         
                         <button class="task-action-btn" id="btn-camera" onclick="document.getElementById('camera-input').click()">📸 開啟圖片庫 / 相機</button>
@@ -349,18 +341,47 @@
                     <button class="btn btn-success" id="btn-finish" style="display: none; margin-top: 20px;" onclick="goToStage(5)">任務全數達成！領取明信片 ➔</button>
                 </div>
 
+                <!-- 階段 5：數位打卡明信片 -->
                 <div id="stage-5" class="stage-content">
                     <p style="text-align: center; color: var(--accent-green); font-weight: bold; margin-bottom: 5px; font-size:1.2rem;">🎉 恭喜成為生態守護者！</p>
                     <p style="text-align: center; font-size: 0.9rem; color: #e74c3c; font-weight:bold; margin-bottom: 15px;">👇 長按下方圖片即可儲存至手機，分享你的保育足跡！</p>
                     
+                    <!-- 這裡是動態合成出來的真實圖片，手機可以直接長按儲存 -->
                     <img id="final-postcard-img" alt="專屬打卡明信片">
                     
+                    <!-- 雙重保障：加上實體下載按鈕，防止某些 App 阻擋長按 -->
                     <a id="download-btn" class="btn btn-success" style="display:none; text-align:center; text-decoration:none; margin-top: 15px;" download="xiangshan_postcard.jpg">📥 點擊下載明信片</a>
                     
+                    <!-- 隱藏的 Canvas 用於背景繪製 -->
                     <canvas id="postcard-canvas" style="display:none;"></canvas>
                 </div>
             </div>
         </div>
+
+        <!-- 獨立於各階段之外的全局 Modal 彈窗區域 (不受 Game Container 限制) -->
+        
+        <!-- 防呆提示框 -->
+        <div class="overlay" id="hint-modal">
+            <div class="hint-content">
+                <h3 style="color:#f39c12; margin-bottom:10px;">💡 溫馨提示</h3>
+                <p style="font-size: 0.9rem; line-height: 1.5; margin-bottom:15px;">水流好像沒有前進喔！<br>請確認你清除的地方，有讓最左側的「藍色潮水」順利連通流進來喔！</p>
+                <button class="btn" style="background:#f39c12; padding: 8px;" onclick="closeHint()">我知道了</button>
+            </div>
+        </div>
+
+        <!-- ★ 通關後的歷史知識彈窗 -->
+        <div class="overlay" id="history-modal">
+            <div class="hint-content" style="border-color: var(--accent-green);">
+                <h3 style="color:var(--accent-green); margin-bottom:10px;">🎉 復育成功！</h3>
+                <div style="font-size: 0.9rem; line-height: 1.6; text-align: left; margin-bottom: 15px; background: #f8f9fa; padding: 12px; border-radius: 6px; color:#333;">
+                    <strong>📖 歷史回顧：</strong><br>在 1990 年代，為防風定砂，香山濕地曾被大量種植紅樹林。然而這些植物過度蔓延，阻擋排洪、破壞泥灘微棲地，甚至引發小黑蚊危機。<br><br>
+                    <strong>🌱 復育行動：</strong><br>為拯救生態，市府與保育團體展開史無前例的大面積拔除行動，清除了 300 多公頃過密紅樹林，才讓美麗的底棲生物與水鳥重新回歸！
+                </div>
+                <!-- 點擊後會關閉彈窗並前往第二關 -->
+                <button class="btn btn-success" onclick="closeHistoryAndGoNext()">前往下一關 ➔</button>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -395,6 +416,11 @@
             if (stageNum === 1) initCanvasGame();
         }
 
+        function closeHistoryAndGoNext() {
+            document.getElementById('history-modal').style.display = 'none';
+            goToStage(2);
+        }
+
         // ==========================================
         // 關卡一：紅樹林清除 Canvas 遊戲 (比例 1.5 : 1)
         // ==========================================
@@ -412,6 +438,7 @@
         let hintTimerId = null;
         let hintShown = false;
         let isHintTimerActive = false;
+        let gameCompleted = false;
 
         function resizeCanvas() {
             const container = document.getElementById('game-container');
@@ -424,7 +451,7 @@
 
         function initCanvasGame() {
             if (gameCanvasInitialized) return;
-            grid = []; flowPercent = 0; hintShown = false;
+            grid = []; flowPercent = 0; hintShown = false; gameCompleted = false;
             
             // 重置彈窗狀態
             document.getElementById('hint-modal').style.display = 'none';
@@ -450,7 +477,7 @@
 
         function handleInput(e) {
             if (isDragging && e.cancelable) e.preventDefault(); 
-            if (!isDragging) return;
+            if (!isDragging || gameCompleted) return;
             let clientX, clientY;
             if (e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } 
             else { clientX = e.clientX; clientY = e.clientY; }
@@ -465,7 +492,7 @@
                     updateSimulation(); 
                 }
                 
-                // ★ 改為 15% 門檻的防呆提示
+                // ★ 15% 門檻防呆提示
                 if (flowPercent < 15 && !hintShown && !isHintTimerActive) {
                     isHintTimerActive = true;
                     hintTimerId = setTimeout(() => {
@@ -533,8 +560,11 @@
             }
 
             // ★ 過關時彈出歷史知識視窗
-            if (flowPercent >= 100) {
-                document.getElementById('history-modal').style.display = 'flex';
+            if (flowPercent >= 100 && !gameCompleted) {
+                gameCompleted = true;
+                setTimeout(() => {
+                    document.getElementById('history-modal').style.display = 'flex';
+                }, 500); // 稍微延遲半秒，讓玩家看到 100% 畫面
             }
         }
 
