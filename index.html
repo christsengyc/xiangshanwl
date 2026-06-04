@@ -69,7 +69,6 @@
         .hint-content { background: var(--panel-dark); color: white; padding: 20px; border-radius: 10px; border: 2px solid #f39c12; max-width: 80%; text-align: center; }
 
         /* 遊戲二：館內解謎 */
-        .quiz-section { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px dashed #eee; }
         .quiz-card { background: #f8f9fa; border: 2px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 15px; transition: 0.3s; }
         .quiz-card.solved { border-color: var(--accent-green); background: #e8f8f5; }
         .quiz-floor { background: var(--primary-blue); color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-right: 8px; }
@@ -117,6 +116,7 @@
 
     <div class="container">
 
+        <!-- ================= 服務與交通資訊頁籤 ================= -->
         <div id="tab-info" class="main-tab">
             <div class="info-card">
                 <h3>🏛️ 館內與周邊服務</h3>
@@ -149,8 +149,10 @@
             </div>
         </div>
 
+        <!-- ================= 闖關任務頁籤 ================= -->
         <div id="tab-game" class="main-tab active">
             <div class="game-wrapper">
+                <!-- 進度條 (增加為 5 步) -->
                 <div class="progress-indicator">
                     <div class="step active" id="step-0">0</div>
                     <div class="step" id="step-1">1</div>
@@ -159,6 +161,7 @@
                     <div class="step" id="step-4">4</div>
                 </div>
 
+                <!-- 階段 0：首頁簡報 -->
                 <div id="stage-0" class="stage-content active">
                     <h2>🌍 歡迎加入守護者行列</h2>
                     <p>你將解決歷史生態危機、探索館內展區尋找解答，最後親自踏上戶外的「賞蟹步道」拍下實境美景！</p>
@@ -168,6 +171,7 @@
                     <button class="btn" onclick="goToStage(1)">接受任務，開始第一關！</button>
                 </div>
 
+                <!-- 階段 1：歷史與環境教育 (紅樹林) -->
                 <div id="stage-1" class="stage-content">
                     <h2>關卡一：解決生態危機</h2>
                     
@@ -191,6 +195,7 @@
                     
                     <div id="game-container">
                         <canvas id="gameCanvas"></canvas>
+                        <!-- 防呆提示框 -->
                         <div class="overlay" id="hint-modal">
                             <div class="hint-content">
                                 <h3 style="color:#f39c12; margin-bottom:10px;">💡 溫馨提示</h3>
@@ -204,6 +209,7 @@
                     <button class="btn btn-success" id="btn-next-2" style="display: none;" onclick="goToStage(2)">🎉 復育成功！前往下一關</button>
                 </div>
 
+                <!-- 階段 2：館內解謎 (1F 1題, 2F 3題, 3F 2題) -->
                 <div id="stage-2" class="stage-content">
                     <h2>關卡二：館內尋寶解謎大挑戰</h2>
                     <p>水流進來了，生物也回來了！請走訪保育中心的 <strong>1到3樓展區</strong>，找出以下 6 道題目的答案：</p>
@@ -277,30 +283,38 @@
                         <div class="eco-fact"></div>
                     </div>
 
+                    <!-- 必須答對 6 題才會顯示 -->
                     <button class="btn btn-success" id="btn-next-3" style="display: none;" onclick="goToStage(3)">🎉 館內解謎全數通關！準備邁向戶外</button>
                 </div>
 
+                <!-- 階段 3：戶外行前裝備與路線確認 -->
                 <div id="stage-3" class="stage-content">
                     <h2>關卡三：整裝出發，邁向賞蟹步道</h2>
                     <p>館內任務完成囉！接下來，我們即將前往戶外最著名的「賞蟹步道」。因為戶外較無遮蔽物，請先完成出發前的裝備與路線確認：</p>
                     
+                    <!-- 溫馨提示 (引導去服務與交通頁籤) -->
+                    <p style="font-size: 0.9rem; color: #2980b9; background: #ebf8ff; padding: 10px; border-radius: 6px; border-left: 4px solid #3498db; margin-bottom: 15px;">
+                        💡 <strong>溫馨提醒：</strong> 若需要使用廁所或裝填飲用水，請點擊畫面上方的<strong>「ℹ️ 服務與交通」</strong>頁籤查看詳細位置資訊喔！
+                    </p>
+
                     <div class="checklist">
-                        <div class="check-item" onclick="toggleCheckSimple('chk-1')">
-                            <div class="check-circle" id="circle-chk-1"></div>
+                        <!-- 將 onclick 參數改為傳遞 this (自身元素) -->
+                        <div class="check-item" onclick="toggleCheckSimple(this)">
+                            <div class="check-circle"></div>
                             <div>
                                 <strong>💧 飲水與防曬</strong>
                                 <div style="font-size: 0.85rem; color: #666;">我已經確認水壺有水，並做好防曬準備。</div>
                             </div>
                         </div>
-                        <div class="check-item" onclick="toggleCheckSimple('chk-2')">
-                            <div class="check-circle" id="circle-chk-2"></div>
+                        <div class="check-item" onclick="toggleCheckSimple(this)">
+                            <div class="check-circle"></div>
                             <div>
                                 <strong>📱 觀測工具</strong>
                                 <div style="font-size: 0.85rem; color: #666;">我的手機電量充足，準備好隨時拍下生態美景。</div>
                             </div>
                         </div>
-                        <div class="check-item" onclick="toggleCheckSimple('chk-3')">
-                            <div class="check-circle" id="circle-chk-3"></div>
+                        <div class="check-item" onclick="toggleCheckSimple(this)">
+                            <div class="check-circle"></div>
                             <div>
                                 <strong>🚶 路線確認</strong>
                                 <div style="font-size: 0.85rem; color: #666;">我知道走出保育中心大門後，要往「海堤方向」前進尋找步道入口。</div>
@@ -311,6 +325,7 @@
                     <button class="btn btn-success" id="btn-next-4" style="display: none;" onclick="goToStage(4)">✅ 裝備確認完畢！正式出發 ➔</button>
                 </div>
 
+                <!-- 階段 4：戶外相機實境紀錄 -->
                 <div id="stage-4" class="stage-content">
                     <h2>關卡四：實境觀測與拍攝紀錄</h2>
                     <p>歡迎來到賞蟹步道！走在步道上，仔細尋找招潮蟹揮舞的大螯、地上的擬糞泥球，或是美麗的夕陽與候鳥。</p>
@@ -320,6 +335,7 @@
                         <h4 style="color: var(--primary-blue); margin-bottom: 5px;">終極任務：拍下濕地之美</h4>
                         <p style="font-size: 0.85rem; color: #555;">請開啟手機相機，親自拍下眼前的濕地風景或小生物！這張照片將成為你的專屬明信片背景。</p>
                         
+                        <!-- 隱藏的檔案上傳/相機按鈕 -->
                         <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoUpload(event)">
                         
                         <button class="task-action-btn" onclick="document.getElementById('camera-input').click()">📸 開啟相機 / 拍攝紀錄</button>
@@ -329,6 +345,7 @@
                     <button class="btn btn-success" id="btn-finish" style="display: none; margin-top: 20px;" onclick="goToStage(5)">任務全數達成！製作明信片 ➔</button>
                 </div>
 
+                <!-- 階段 5：數位打卡明信片 -->
                 <div id="stage-5" class="stage-content">
                     <p style="text-align: center; color: var(--accent-green); font-weight: bold; margin-bottom: 5px;">🎉 恭喜成為生態守護者！</p>
                     <p style="text-align: center; font-size: 0.85rem; color: #666;">長按下方圖片即可儲存至手機，分享你的專屬保育足跡！</p>
@@ -551,7 +568,7 @@
                 buttons.forEach(b => b.disabled = true); 
                 
                 let timeLeft = 3;
-                btnEl.innerHTML = `❌ 錯誤！鎖定中 (${timeLeft}s)`;
+                btnEl.innerHTML = `❌ 冷靜一下，再想想看 (${timeLeft}s)`;
                 
                 const timer = setInterval(() => {
                     timeLeft--;
@@ -562,7 +579,7 @@
                         btnEl.innerHTML = originalText;
                         buttons.forEach(b => b.disabled = false); 
                     } else {
-                        btnEl.innerHTML = `❌ 錯誤！鎖定中 (${timeLeft}s)`;
+                        btnEl.innerHTML = `❌ 冷靜一下，再想想看 (${timeLeft}s)`;
                     }
                 }, 1000);
             }
@@ -571,8 +588,9 @@
         // ==========================================
         // 關卡三：裝備與路線確認打卡
         // ==========================================
-        function toggleCheckSimple(id) {
-            document.getElementById(id).closest('.check-item').classList.toggle('checked');
+        function toggleCheckSimple(element) {
+            // 直接操控當下被點擊的元素，加上 / 移除 checked 狀態
+            element.classList.toggle('checked');
             checkAllGearCompleted();
         }
 
