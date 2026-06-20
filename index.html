@@ -666,7 +666,6 @@
             let qData = quizData[currentQuizFloor][currentQIndex];
             
             document.getElementById('quiz-floor-title').innerText = `📍 ${currentQuizFloor} 樓展區任務`;
-            // 修改進度顯示，將 Index 加 1，讓畫面顯示 1/3, 2/3... 而不是 0/3
             document.getElementById('quiz-progress-text').innerText = `進度: ${currentQIndex + 1} / ${targetQCount}`;
             document.getElementById('quiz-question-text').innerText = qData.q;
             
@@ -791,7 +790,7 @@
                     preview.style.display = 'block';
                     
                     const btn = document.getElementById('btn-camera');
-                    btn.innerHTML = '✅ 照片紀錄完成！(可重選)';
+                    btn.innerHTML = '✅ 照片紀錄完成！';
                     btn.style.background = 'var(--accent-green)';
                     document.getElementById('task-photo').classList.add('completed');
                     
