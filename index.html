@@ -63,10 +63,10 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 9999; display: none; }
         .hint-content { background: var(--panel-dark); color: white; padding: 25px 20px; border-radius: 12px; border: 2px solid #f39c12; width: 90%; max-width: 400px; text-align: center; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
 
-        /* 對話框樣式 (加入頭像) */
+        /* 對話框樣式 (頭像區塊) */
         .dialog-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 20; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 15px; display: none; border-radius: 4px; }
         .dialog-box { background: rgba(255, 255, 255, 0.95); width: 92%; border-radius: 8px; padding: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); position: relative; border-left: 5px solid var(--accent-blue); display: flex; gap: 12px; align-items: flex-start;}
-        .dialog-avatar { width: 55px; height: 55px; border-radius: 50%; background-color: #e2e8f0; border: 2px solid var(--accent-blue); flex-shrink: 0; object-fit: cover;}
+        .dialog-avatar { width: 50px; height: 50px; flex-shrink: 0; object-fit: contain;}
         .dialog-content-area { flex-grow: 1; }
         .dialog-speaker { font-weight: bold; color: var(--primary-blue); margin-bottom: 4px; font-size: 0.95rem; }
         .dialog-text { color: #333; font-size: 0.9rem; line-height: 1.4; margin-bottom: 8px; }
@@ -99,17 +99,26 @@
         .task-card.completed .task-action-btn { background: var(--accent-green); pointer-events: none; }
         #preview-img { width: 100%; max-height: 250px; object-fit: cover; margin-top: 15px; border-radius: 8px; display: none; border: 2px solid #ddd; }
         
-        /* 模板選擇 (加入預覽圖樣) */
+        /* 模板選擇器 (使用真實 HTML 方塊避免破圖) */
         .template-selector { display: flex; gap: 10px; justify-content: center; margin-top: 15px; display: none; }
-        .tpl-btn { flex: 1; padding: 10px 5px; border: 2px solid #cbd5e0; background: white; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.8rem; font-weight: bold; color: #555; transition: 0.3s;}
+        .tpl-btn { flex: 1; padding: 12px 6px; border: 2px solid #cbd5e0; background: white; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; text-align: center; font-size: 0.8rem; font-weight: bold; color: #555; transition: 0.3s;}
         .tpl-btn.active { border-color: var(--primary-blue); background: #ebf8ff; color: var(--primary-blue); box-shadow: 0 0 8px rgba(52,152,219,0.3);}
         
-        .tpl-preview-box { width: 100%; height: 50px; margin-bottom: 8px; border-radius: 4px; border: 1px solid #ccc; background-color: #f1f1f1; position: relative; overflow: hidden; }
-        .tpl-prev-1 { background: white; border: 3px solid #eee; } /* 白框 */
-        .tpl-prev-1::after { content:''; display:block; width:100%; height:30px; background:#ccc; margin-top:5px; }
-        .tpl-prev-2 { background: white; border: 1px solid #eee; } /* 拍立得 */
-        .tpl-prev-2::after { content:''; display:block; width:80%; height:30px; background:#ccc; margin: 3px auto 0; border-radius:2px;}
-        .tpl-prev-3 { background: linear-gradient(to bottom, #bdc3c7 60%, #34495e 100%); border: none; } /* 全幅 */
+        .prev-box { width: 60px; height: 80px; border-radius: 4px; display: flex; flex-direction: column; box-sizing: border-box; margin-bottom: 8px; overflow: hidden; border: 1px solid #ccc;}
+        
+        /* 預覽1：白框 */
+        .prev-1 { background: #fff; padding: 4px; align-items: center;}
+        .prev-1 .p-img { width: 100%; height: 45px; background: #ddd; border: 1px solid #eee;}
+        .prev-1 .p-txt { width: 80%; height: 6px; background: #ccc; margin-top: 6px; border-radius: 2px;}
+        
+        /* 預覽2：生態圖鑑 (牛皮紙+雙框) */
+        .prev-2 { background: #F5F1E7; border: 2px solid #5A4D41; padding: 4px; align-items: center;}
+        .prev-2 .p-img { width: 100%; height: 40px; background: #ddd; border: 1px solid #2C3E50; margin-top: 4px;}
+        .prev-2 .p-txt { width: 90%; height: 6px; background: #5A4D41; margin-top: 6px; border-radius: 2px;}
+
+        /* 預覽3：全幅 */
+        .prev-3 { background: linear-gradient(to bottom, #7f8c8d 40%, #2c3e50 100%); justify-content: flex-end; padding-bottom: 6px;}
+        .prev-3 .p-txt { width: 70%; height: 6px; background: rgba(255,255,255,0.8); margin-left: 6px; border-radius: 2px;}
         
         #final-postcard-img { width: 100%; max-width: 450px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); display: block; margin: 0 auto; border: 1px solid #eee; -webkit-touch-callout: default; pointer-events: auto; }
     </style>
@@ -289,16 +298,24 @@
                         
                         <div class="template-selector" id="template-selector">
                             <div class="tpl-btn active" onclick="selectTemplate(1)">
-                                <div class="tpl-preview-box tpl-prev-1"></div>
-                                模板一<br>(經典白框)
+                                <div class="prev-box prev-1">
+                                    <div class="p-img"></div>
+                                    <div class="p-txt"></div>
+                                </div>
+                                經典白框
                             </div>
                             <div class="tpl-btn" onclick="selectTemplate(2)">
-                                <div class="tpl-preview-box tpl-prev-2"></div>
-                                模板二<br>(拍立得風)
+                                <div class="prev-box prev-2">
+                                    <div class="p-img"></div>
+                                    <div class="p-txt"></div>
+                                </div>
+                                生態圖鑑
                             </div>
                             <div class="tpl-btn" onclick="selectTemplate(3)">
-                                <div class="tpl-preview-box tpl-prev-3"></div>
-                                模板三<br>(全幅風景)
+                                <div class="prev-box prev-3">
+                                    <div class="p-txt"></div>
+                                </div>
+                                全幅風景
                             </div>
                         </div>
                     </div>
@@ -377,7 +394,7 @@
             goToStage(2);
         }
 
-        // 修改後的 Modal 控制 (讓文字顏色客製化)
+        // Modal 控制 (讓文字顏色客製化)
         function showCustomModal(title, text, btnText, color, callback) {
             let modal = document.getElementById('hint-modal');
             let titleEl = modal.querySelector('h3');
@@ -415,14 +432,17 @@
         let isHintTimerActive = false;
         let gameCompleted = false;
 
-        // --- 角色頭像圖片庫 (使用開源 API，可自行替換連結) ---
+        // --- 原生 Emoji SVG 轉換器 (絕對不會破圖的 Q版人物/動物) ---
+        function createEmojiAvatar(emoji, bgColor) {
+            return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23${bgColor}" rx="50"/><text y="52" x="50" font-size="60" dominant-baseline="central" text-anchor="middle">${emoji}</text></svg>`;
+        }
         const avatars = {
-            '村民': 'https://api.dicebear.com/7.x/adventurer/svg?seed=Dustin&backgroundColor=e2e8f0',
-            '主角': 'https://api.dicebear.com/7.x/adventurer/svg?seed=Felix&backgroundColor=f1c40f',
-            '支持拆除的居民': 'https://api.dicebear.com/7.x/adventurer/svg?seed=Jack&backgroundColor=3498db',
-            '不支持拆除的居民': 'https://api.dicebear.com/7.x/adventurer/svg?seed=Jocelyn&backgroundColor=e74c3c',
-            '保育員': 'https://api.dicebear.com/7.x/adventurer/svg?seed=Destiny&backgroundColor=2ecc71',
-            '濕地生物': 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Crab&backgroundColor=8e44ad'
+            '村民': createEmojiAvatar('🧑‍🌾', 'e2e8f0'), 
+            '主角': createEmojiAvatar('🧒', 'f1c40f'), 
+            '支持拆除的居民': createEmojiAvatar('🙋‍♂️', '3498db'), 
+            '不支持拆除的居民': createEmojiAvatar('🙅‍♀️', 'e74c3c'), 
+            '保育員': createEmojiAvatar('👷', '2ecc71'), 
+            '濕地生物': createEmojiAvatar('🦀', '8e44ad') // Q版螃蟹
         };
 
         // Dialog System
@@ -442,7 +462,7 @@
                 document.getElementById('dialog-overlay').style.display = 'flex';
                 document.getElementById('dialog-speaker').innerText = d.speaker;
                 document.getElementById('dialog-text').innerText = d.text;
-                // 設定該角色的頭像
+                // 設定該角色的純 SVG Emoji 頭像
                 document.getElementById('dialog-avatar').src = avatars[d.speaker] || avatars['村民'];
             } else {
                 document.getElementById('dialog-overlay').style.display = 'none';
@@ -672,7 +692,7 @@
                 
                 document.getElementById('btn-next-quiz').style.display = 'block';
             } else {
-                // Wrong -> 結合鎖定冷卻 3 秒，結束後再跳出增加懲罰的 Modal
+                // Wrong -> 冷卻 3 秒，結束後再跳出增加懲罰的 Modal
                 const originalText = btnEl.innerHTML;
                 btnEl.style.background = '#fadbd8';
                 btnEl.style.borderColor = '#e74c3c';
@@ -689,7 +709,6 @@
                         btnEl.innerHTML = originalText;
                         buttons.forEach(b => b.disabled = false);
                         
-                        // 倒數結束後，跳出提示並增加一題懲罰
                         showCustomModal('⚠️ 哎呀答錯囉！', '讓我們冷靜一下，重新回顧這層樓的展覽，我們增加了一個小考驗喔！', '重新挑戰', '#c0392b', () => {
                             currentQIndex = 0;
                             targetQCount = 4; // Penalty applied (4 questions)
@@ -717,7 +736,7 @@
                         </div>
                     `;
                 } else {
-                    // 樓層通關 (文字改為高對比度的深藍色)
+                    // 樓層通關 (深藍色標題)
                     showCustomModal('🌟 樓層通關', `太棒了！準備前往 ${currentQuizFloor} 樓繼續挑戰！`, '出發', '#2980b9', () => {
                         currentQIndex = 0;
                         targetQCount = 3;
@@ -802,28 +821,73 @@
                     ctx.strokeRect(30, 30, targetWidth, targetHeight);
                     
                     drawStamp(ctx, 680, 100);
-                    drawText(ctx, '#333333', 40, 620);
+                    
+                    ctx.fillStyle = '#333333';
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'top';
+                    ctx.font = 'bold 32px "Microsoft JhengHei", sans-serif';
+                    ctx.fillText('給熱愛自然的你：', 40, 620);
+
+                    ctx.font = '28px "Microsoft JhengHei", sans-serif';
+                    const lh = 45; 
+                    ctx.fillText('謝謝你今天拜訪香山濕地，與我們一起見證了', 40, 680);
+                    ctx.fillText('紅樹林清除後的生機重現。', 40, 680 + lh);
+                    ctx.fillText('每一顆小泥球，每一隻招潮蟹，', 40, 680 + lh * 2);
+                    ctx.fillText('都是生態復原的奇蹟。', 40, 680 + lh * 3);
+
+                    ctx.textAlign = 'right';
+                    ctx.font = '24px "Microsoft JhengHei", sans-serif';
+                    ctx.fillText('- 珍古德教育及保育協會 敬上', 750, 680 + lh * 4 + 30);
                 } 
                 else if(currentTemplate === 2) {
-                    // 模板二：全新設計的拍立得風
-                    // 背景色
-                    ctx.fillStyle = '#e2e8f0'; 
+                    // 模板二：生態觀察日誌風 (圖鑑風格)
+                    // 牛皮紙底色
+                    ctx.fillStyle = '#F5F1E7'; 
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     
-                    // 拍立得白色相紙 (帶立體陰影)
-                    ctx.fillStyle = '#ffffff';
-                    ctx.shadowColor = "rgba(0,0,0,0.15)";
-                    ctx.shadowBlur = 20;
-                    ctx.shadowOffsetX = 0; 
-                    ctx.shadowOffsetY = 10;
-                    ctx.fillRect(100, 80, 600, 750);
-                    ctx.shadowColor = "transparent"; // 重置陰影避免影響其他繪圖
+                    // 復古雙層邊框
+                    ctx.strokeStyle = '#5A4D41';
+                    ctx.lineWidth = 6;
+                    ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
+
+                    // 頂部日誌標籤
+                    ctx.fillStyle = '#2C5F2D';
+                    ctx.fillRect(30, 50, 300, 50);
+                    ctx.fillStyle = '#FFE77AFF';
+                    ctx.font = 'bold 26px "Microsoft JhengHei", sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('生態觀察日誌', 180, 75);
                     
-                    // 照片區域 (正方形裁切)
-                    drawImageCover(ctx, userImg, 120, 100, 560, 560);
+                    // 照片區域 (加入深綠色邊框)
+                    const targetWidth = 660;
+                    const targetHeight = 500;
+                    drawImageCover(ctx, userImg, 70, 130, targetWidth, targetHeight);
+                    ctx.strokeStyle = '#2C3E50'; 
+                    ctx.lineWidth = 4;
+                    ctx.strokeRect(70, 130, targetWidth, targetHeight);
                     
-                    drawStamp(ctx, 600, 150);
-                    drawText(ctx, '#333333', 130, 680, true); 
+                    drawStamp(ctx, 650, 150);
+
+                    // 日誌感文字
+                    ctx.fillStyle = '#3E362E'; 
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'top';
+                    ctx.font = 'bold 32px "Microsoft JhengHei", sans-serif';
+                    ctx.fillText('給熱愛自然的你：', 70, 670);
+
+                    ctx.font = '28px "Microsoft JhengHei", sans-serif';
+                    const lh = 45; 
+                    ctx.fillText('謝謝你今天拜訪香山濕地，與我們一起見證了', 70, 730);
+                    ctx.fillText('紅樹林清除後的生機重現。', 70, 730 + lh);
+                    ctx.fillText('每一顆小泥球，每一隻招潮蟹，', 70, 730 + lh * 2);
+                    ctx.fillText('都是生態復原的奇蹟。', 70, 730 + lh * 3);
+
+                    ctx.textAlign = 'right';
+                    ctx.font = 'bold 24px "Microsoft JhengHei", sans-serif';
+                    ctx.fillText('- 珍古德教育及保育協會 敬上', 730, 730 + lh * 4 + 30);
                 }
                 else if(currentTemplate === 3) {
                     // 模板三：全幅風景
@@ -837,7 +901,23 @@
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     
                     drawStamp(ctx, 700, 100);
-                    drawText(ctx, '#ffffff', 40, 750);
+                    
+                    ctx.fillStyle = '#ffffff';
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'top';
+                    ctx.font = 'bold 32px "Microsoft JhengHei", sans-serif';
+                    ctx.fillText('給熱愛自然的你：', 40, 750);
+
+                    ctx.font = '28px "Microsoft JhengHei", sans-serif';
+                    const lh = 45; 
+                    ctx.fillText('謝謝你今天拜訪香山濕地，與我們一起見證了', 40, 810);
+                    ctx.fillText('紅樹林清除後的生機重現。', 40, 810 + lh);
+                    ctx.fillText('每一顆小泥球，每一隻招潮蟹，', 40, 810 + lh * 2);
+                    ctx.fillText('都是生態復原的奇蹟。', 40, 810 + lh * 3);
+
+                    ctx.textAlign = 'right';
+                    ctx.font = '24px "Microsoft JhengHei", sans-serif';
+                    ctx.fillText('- 珍古德教育及保育協會 敬上', 750, 810 + lh * 4 + 30);
                 }
 
                 // 導出為實際圖片
@@ -887,25 +967,6 @@
             ctx.fillText('任務', 0, -15);
             ctx.fillText('達成', 0, 15);
             ctx.restore();
-        }
-
-        function drawText(ctx, color, x, y, compact = false) {
-            ctx.fillStyle = color;
-            ctx.textAlign = 'left';
-            ctx.textBaseline = 'top';
-            ctx.font = 'bold 32px "Microsoft JhengHei", sans-serif';
-            ctx.fillText('給熱愛自然的你：', x, y);
-
-            ctx.font = '28px "Microsoft JhengHei", sans-serif';
-            const lh = compact ? 35 : 45; 
-            ctx.fillText('謝謝你今天拜訪香山濕地，與我們一起見證了', x, y + 60);
-            ctx.fillText('紅樹林清除後的生機重現。', x, y + 60 + lh);
-            ctx.fillText('每一顆小泥球，每一隻招潮蟹，', x, y + 60 + lh * 2);
-            ctx.fillText('都是生態復原的奇蹟。', x, y + 60 + lh * 3);
-
-            ctx.textAlign = 'right';
-            ctx.font = '24px "Microsoft JhengHei", sans-serif';
-            ctx.fillText('- 珍古德教育及保育協會 敬上', x + (compact? 540 : 710), y + 60 + lh * 4 + (compact? 10: 50));
         }
     </script>
 </body>
