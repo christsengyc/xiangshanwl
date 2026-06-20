@@ -117,7 +117,7 @@
         .prev-1 .p-img { width: 100%; height: 45px; background: #ddd; border: 1px solid #eee;}
         .prev-1 .p-txt { width: 80%; height: 6px; background: #ccc; margin-top: 6px; border-radius: 2px;}
         
-        /* 預覽2：生態圖鑑 (加入濕地小裝飾預覽) */
+        /* 預覽2：生態圖鑑 */
         .prev-2 { background: #F5F1E7; border: 2px solid #5A4D41; padding: 4px; align-items: center;}
         .prev-2 .p-img { width: 100%; height: 40px; background: #ddd; border: 1px solid #2C3E50; margin-top: 4px;}
         .prev-2 .p-txt { width: 90%; height: 6px; background: #5A4D41; margin-top: 6px; border-radius: 2px;}
@@ -245,7 +245,7 @@
                     <div id="quiz-container">
                         <div class="quiz-floor-header" id="quiz-floor-title">載入中...</div>
                         <div class="quiz-card" id="quiz-card-content">
-                            <div class="quiz-progress" id="quiz-progress-text">進度: 0 / 3</div>
+                            <div class="quiz-progress" id="quiz-progress-text">進度: 1 / 3</div>
                             
                             <div id="quiz-img-container" class="quiz-img-wrapper" style="display: none;">
                                 <img id="quiz-image" class="quiz-img" src="" alt="展板圖片">
@@ -627,16 +627,16 @@
             }
         }
 
-        // --- Game 2: Dynamic Quiz System (已更新全部題目與對應圖片) ---
+        // --- Game 2: Dynamic Quiz System ---
         const quizData = {
             1: [
-                { q: "根據展板，海洋保育署沒有以什麼為核心願景？", options: ["潔淨海洋", "健康棲地", "再生能源"], ans: 2, fact: "海保署以潔淨海洋、健康棲地為核心願景，共同守護香山濕地！", img: "24409_0.jpg" },
+                { q: "根據展板，海洋保育署沒有以什麼為核心願景？", options: ["潔淨海洋", "健康棲地", "再生能源"], ans: 2, fact: "海保署以潔淨海洋、健康棲地、永續資源為核心願景，共同守護香山濕地！", img: "24409_0.jpg" },
                 { q: "根據展板，香山濕地是多少候鳥及留鳥的棲地？", options: ["208", "186", "118"], ans: 1, fact: "香山濕地生態豐富，是高達186種候鳥及留鳥的重要棲地！", img: "24410_0.jpg" },
                 { q: "關於香山濕地，為什麼這裡的底棲生物如此豐富？", options: ["因為泥灘地含有豐富有機碎屑", "因為這裡有加裝人工餵食器", "因為氣候極端變化"], ans: 0, fact: "泥灘地擁有豐富的有機碎屑，是螃蟹、貝類等底棲生物最佳的覓食天堂！", img: null },
                 { q: "【加碼挑戰】根據展板，香山濕地是哪一種濕地？", options: ["海岸型濕地", "沼澤型濕地", "陸地型濕地"], ans: 0, fact: "香山濕地屬於海岸型濕地，擁有廣大的泥灘地與豐富的潮間帶生態！", img: "24416.jpg" }
             ],
             2: [
-                { q: "三棘鱟的樣本來自：", options: ["金門縣水產試驗所", "新竹市水產試驗所", "桃園市水產試驗所"], ans: 0, fact: "三棘鱟又被稱為活化石，這裡的樣本是特別從金門縣水產試驗所借展的喔！", img: "24415_0.jpg" },
+                { q: "三棘鱟的樣本來自：", options: ["金門縣水產試驗所", "新竹市水產試驗所", "桃園市水產試驗所"], ans: 0, fact: "三棘鱟又被稱為活化石，這裡的樣本是由金門縣水產試驗所提供的喔！", img: "24415_0.jpg" },
                 { q: "哪一種特有種螃蟹具有「雄蟹揮舞雙螯，動作像是在高呼萬歲」的特徵？", options: ["台灣招潮蟹", "短腕和尚蟹", "萬歲大眼蟹"], ans: 2, fact: "萬歲大眼蟹的雄蟹在求偶或威嚇時，會高舉雙螯，動作就像在喊「萬歲」一樣，非常可愛！", img: null },
                 { q: "根據展板，高蹺鴴的育雛時間為：", options: ["4-6月", "5-8月", "5-9月"], ans: 1, fact: "高蹺鴴擁有修長的紅腿，每年5到8月是牠們在濕地孕育下一代的重要時期！", img: "24413_0.jpg" },
                 { q: "【加碼挑戰】根據展板，台灣黑面琵鷺占全世界的：", options: ["40%", "50%", "60%"], ans: 2, fact: "台灣是黑面琵鷺最重要的度冬地，數量佔了全球的60%喔！", img: "24414_0.jpg" }
@@ -666,10 +666,10 @@
             let qData = quizData[currentQuizFloor][currentQIndex];
             
             document.getElementById('quiz-floor-title').innerText = `📍 ${currentQuizFloor} 樓展區任務`;
-            document.getElementById('quiz-progress-text').innerText = `進度: ${currentQIndex} / ${targetQCount}`;
+            // 修改進度顯示，將 Index 加 1，讓畫面顯示 1/3, 2/3... 而不是 0/3
+            document.getElementById('quiz-progress-text').innerText = `進度: ${currentQIndex + 1} / ${targetQCount}`;
             document.getElementById('quiz-question-text').innerText = qData.q;
             
-            // 處理展板圖片顯示
             let imgContainer = document.getElementById('quiz-img-container');
             let imgEl = document.getElementById('quiz-image');
             if (qData.img) {
