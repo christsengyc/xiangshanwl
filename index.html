@@ -63,7 +63,7 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 9999; display: none; }
         .hint-content { background: var(--panel-dark); color: white; padding: 25px 20px; border-radius: 12px; border: 2px solid #f39c12; width: 90%; max-width: 400px; text-align: center; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
 
-        /* 對話框樣式 (頭像區塊) */
+        /* 對話框樣式 */
         .dialog-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 20; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 15px; display: none; border-radius: 4px; }
         .dialog-box { background: rgba(255, 255, 255, 0.95); width: 92%; border-radius: 8px; padding: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); position: relative; border-left: 5px solid var(--accent-blue); display: flex; gap: 12px; align-items: flex-start;}
         .dialog-avatar { width: 50px; height: 50px; flex-shrink: 0; object-fit: contain;}
@@ -76,6 +76,12 @@
         .quiz-floor-header { background: var(--primary-blue); color: white; padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: bold; font-size: 1.1rem; text-align: center; }
         .quiz-card { background: #f8f9fa; border: 2px solid #e2e8f0; border-radius: 0 0 8px 8px; padding: 20px; transition: 0.3s; margin-bottom: 15px; }
         .quiz-progress { font-size: 0.8rem; color: #7f8c8d; text-align: right; margin-bottom: 10px; font-weight: bold; }
+        
+        /* 圖片排版樣式 */
+        .quiz-img-wrapper { text-align: center; margin-bottom: 15px; }
+        .quiz-img { width: 100%; max-height: 250px; object-fit: contain; border-radius: 8px; border: 1px solid #cbd5e0; background: #fff;}
+        .quiz-img-caption { font-size: 0.75rem; color: #888; margin-top: 4px; }
+        
         .quiz-q-text { font-size: 1rem; color: #2c3e50; margin-bottom: 15px; font-weight: bold; line-height: 1.5; }
         .quiz-options { display: flex; flex-direction: column; gap: 10px; }
         .quiz-btn { background: white; border: 2px solid #cbd5e0; padding: 12px; border-radius: 8px; text-align: left; cursor: pointer; transition: 0.2s; font-size: 0.95rem; line-height: 1.4; color: #444; font-weight: bold; }
@@ -99,22 +105,24 @@
         .task-card.completed .task-action-btn { background: var(--accent-green); pointer-events: none; }
         #preview-img { width: 100%; max-height: 250px; object-fit: cover; margin-top: 15px; border-radius: 8px; display: none; border: 2px solid #ddd; }
         
-        /* 模板選擇器 (使用真實 HTML 方塊避免破圖) */
+        /* 模板選擇器 */
         .template-selector { display: flex; gap: 10px; justify-content: center; margin-top: 15px; display: none; }
         .tpl-btn { flex: 1; padding: 12px 6px; border: 2px solid #cbd5e0; background: white; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; text-align: center; font-size: 0.8rem; font-weight: bold; color: #555; transition: 0.3s;}
         .tpl-btn.active { border-color: var(--primary-blue); background: #ebf8ff; color: var(--primary-blue); box-shadow: 0 0 8px rgba(52,152,219,0.3);}
         
-        .prev-box { width: 60px; height: 80px; border-radius: 4px; display: flex; flex-direction: column; box-sizing: border-box; margin-bottom: 8px; overflow: hidden; border: 1px solid #ccc;}
+        .prev-box { width: 60px; height: 80px; border-radius: 4px; display: flex; flex-direction: column; box-sizing: border-box; margin-bottom: 8px; overflow: hidden; border: 1px solid #ccc; position: relative;}
         
         /* 預覽1：白框 */
         .prev-1 { background: #fff; padding: 4px; align-items: center;}
         .prev-1 .p-img { width: 100%; height: 45px; background: #ddd; border: 1px solid #eee;}
         .prev-1 .p-txt { width: 80%; height: 6px; background: #ccc; margin-top: 6px; border-radius: 2px;}
         
-        /* 預覽2：生態圖鑑 (牛皮紙+雙框) */
+        /* 預覽2：生態圖鑑 (加入濕地小裝飾預覽) */
         .prev-2 { background: #F5F1E7; border: 2px solid #5A4D41; padding: 4px; align-items: center;}
         .prev-2 .p-img { width: 100%; height: 40px; background: #ddd; border: 1px solid #2C3E50; margin-top: 4px;}
         .prev-2 .p-txt { width: 90%; height: 6px; background: #5A4D41; margin-top: 6px; border-radius: 2px;}
+        .prev-2::after { content: '🦀'; position: absolute; bottom: 10px; right: 2px; font-size: 12px; opacity: 0.8; }
+        .prev-2::before { content: '🌿'; position: absolute; top: 2px; left: 2px; font-size: 10px; opacity: 0.7; }
 
         /* 預覽3：全幅 */
         .prev-3 { background: linear-gradient(to bottom, #7f8c8d 40%, #2c3e50 100%); justify-content: flex-end; padding-bottom: 6px;}
@@ -238,6 +246,12 @@
                         <div class="quiz-floor-header" id="quiz-floor-title">載入中...</div>
                         <div class="quiz-card" id="quiz-card-content">
                             <div class="quiz-progress" id="quiz-progress-text">進度: 0 / 3</div>
+                            
+                            <div id="quiz-img-container" class="quiz-img-wrapper" style="display: none;">
+                                <img id="quiz-image" class="quiz-img" src="" alt="展板圖片">
+                                <p class="quiz-img-caption">(本圖來自海洋保育教育中心)</p>
+                            </div>
+
                             <div class="quiz-q-text" id="quiz-question-text">題目</div>
                             <div class="quiz-options" id="quiz-options-container">
                                 </div>
@@ -394,7 +408,6 @@
             goToStage(2);
         }
 
-        // Modal 控制 (讓文字顏色客製化)
         function showCustomModal(title, text, btnText, color, callback) {
             let modal = document.getElementById('hint-modal');
             let titleEl = modal.querySelector('h3');
@@ -432,7 +445,6 @@
         let isHintTimerActive = false;
         let gameCompleted = false;
 
-        // --- 原生 Emoji SVG 轉換器 (絕對不會破圖的 Q版人物/動物) ---
         function createEmojiAvatar(emoji, bgColor) {
             return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23${bgColor}" rx="50"/><text y="52" x="50" font-size="60" dominant-baseline="central" text-anchor="middle">${emoji}</text></svg>`;
         }
@@ -442,10 +454,9 @@
             '支持拆除的居民': createEmojiAvatar('🙋‍♂️', '3498db'), 
             '不支持拆除的居民': createEmojiAvatar('🙅‍♀️', 'e74c3c'), 
             '保育員': createEmojiAvatar('👷', '2ecc71'), 
-            '濕地生物': createEmojiAvatar('🦀', '8e44ad') // Q版螃蟹
+            '濕地生物': createEmojiAvatar('🦀', '8e44ad') 
         };
 
-        // Dialog System
         let dialogQueue = [];
         let isDialogActive = false;
         let triggered0 = false, triggered50 = false, triggered80 = false;
@@ -462,7 +473,6 @@
                 document.getElementById('dialog-overlay').style.display = 'flex';
                 document.getElementById('dialog-speaker').innerText = d.speaker;
                 document.getElementById('dialog-text').innerText = d.text;
-                // 設定該角色的純 SVG Emoji 頭像
                 document.getElementById('dialog-avatar').src = avatars[d.speaker] || avatars['村民'];
             } else {
                 document.getElementById('dialog-overlay').style.display = 'none';
@@ -504,7 +514,6 @@
             resizeCanvas(); 
             gameCanvasInitialized = true;
             
-            // Trigger 0% Dialog
             if(!triggered0) {
                 triggered0 = true;
                 showDialog([
@@ -592,7 +601,6 @@
                 isHintTimerActive = false;
             }
 
-            // Trigger 50% Dialog
             if (flowPercent >= 50 && !triggered50) {
                 triggered50 = true;
                 showDialog([
@@ -602,7 +610,6 @@
                 ]);
             }
 
-            // Trigger 80% Dialog
             if (flowPercent >= 80 && !triggered80) {
                 triggered80 = true;
                 showDialog([
@@ -620,25 +627,25 @@
             }
         }
 
-        // --- Game 2: Dynamic Quiz System ---
+        // --- Game 2: Dynamic Quiz System (已更新全部題目與對應圖片) ---
         const quizData = {
             1: [
-                { q: "海洋委員會海洋保育署（海保署）在香山濕地的主要工作項目包含了什麼？", options: ["經營濕地海鮮餐廳", "濕地生態保育與在地巡守隊合作", "舉辦大型沙灘排球賽"], ans: 1, fact: "海保署積極推動濕地生態保育，並與在地NGO團體、巡守隊合作，共同守護香山濕地！" },
-                { q: "關於香山濕地，為什麼這裡的底棲生物如此豐富？", options: ["因為泥灘地含有豐富有機碎屑", "因為這裡有加裝人工餵食器", "因為氣候極端變化"], ans: 0, fact: "泥灘地擁有豐富的有機碎屑，是螃蟹、貝類等底棲生物最佳的覓食天堂！" },
-                { q: "在「候鳥翱翔電視牆」中，可以了解到香山濕地對候鳥的重要性是什麼？", options: ["作為人類捕捉候鳥的場所", "讓候鳥可以參加飛行比賽", "提供候鳥遷徙時的休息與覓食中繼站"], ans: 2, fact: "香山濕地位於東亞澳候鳥遷徙路線上，是極為重要的水鳥驛站！" },
-                { q: "【加碼挑戰】哪一種鳥類擁有像湯匙一樣的扁平長嘴，會在水中掃動覓食，也是香山濕地珍貴的過客？", options: ["黑面琵鷺", "高蹺鴴", "小白鷺"], ans: 0, fact: "黑面琵鷺的扁平長嘴非常特別，是瀕臨絕種的國際級保育類動物喔！" }
+                { q: "根據展板，海洋保育署沒有以什麼為核心願景？", options: ["潔淨海洋", "健康棲地", "再生能源"], ans: 2, fact: "海保署以潔淨海洋、健康棲地為核心願景，共同守護香山濕地！", img: "24409_0.jpg" },
+                { q: "根據展板，香山濕地是多少候鳥及留鳥的棲地？", options: ["208", "186", "118"], ans: 1, fact: "香山濕地生態豐富，是高達186種候鳥及留鳥的重要棲地！", img: "24410_0.jpg" },
+                { q: "關於香山濕地，為什麼這裡的底棲生物如此豐富？", options: ["因為泥灘地含有豐富有機碎屑", "因為這裡有加裝人工餵食器", "因為氣候極端變化"], ans: 0, fact: "泥灘地擁有豐富的有機碎屑，是螃蟹、貝類等底棲生物最佳的覓食天堂！", img: null },
+                { q: "【加碼挑戰】根據展板，香山濕地是哪一種濕地？", options: ["海岸型濕地", "沼澤型濕地", "陸地型濕地"], ans: 0, fact: "香山濕地屬於海岸型濕地，擁有廣大的泥灘地與豐富的潮間帶生態！", img: "24416.jpg" }
             ],
             2: [
-                { q: "哪一種特有種螃蟹具有「雄蟹揮舞雙螯，動作像是在高呼萬歲」的特徵？", options: ["台灣招潮蟹", "短腕和尚蟹", "萬歲大眼蟹"], ans: 2, fact: "萬歲大眼蟹的雄蟹在求偶或威嚇時，會高舉雙螯，動作就像在喊「萬歲」一樣，非常可愛！" },
-                { q: "觀察展板上的三棘鱟介紹，雄鱟和雌鱟在外觀上有什麼明顯的差異？", options: ["雄鱟前緣呈現凹陷狀，以利抱住雌鱟", "雄鱟體型比雌鱟大兩倍以上", "只有雌鱟才長有長長的劍尾"], ans: 0, fact: "雄鱟體型較小，且頭胸甲前緣有兩處凹陷，這是為了在繁殖季節能緊緊抱住雌鱟的背甲喔！" },
-                { q: "近年舉辦的「香山濕地藝術季」，這些藝術作品通常強調什麼概念？", options: ["大量引進外國進口花卉美化", "結合自然地景與在地文化的共生", "使用純金屬打造永久性摩天樓"], ans: 1, fact: "藝術季作品多利用在地素材，結合自然地景與香山文化，強調人與環境的和諧共生。" },
-                { q: "【加碼挑戰】香山濕地是哪一種台灣特有種招潮蟹，在全球數量最多的家？", options: ["台灣招潮蟹", "弧邊招潮蟹", "清白招潮蟹"], ans: 0, fact: "台灣招潮蟹是台灣特有種，特徵是雄蟹擁有如剪刀般的大白螯，香山濕地是牠們最重要的棲地！" }
+                { q: "三棘鱟的樣本來自：", options: ["金門縣水產試驗所", "新竹市水產試驗所", "桃園市水產試驗所"], ans: 0, fact: "三棘鱟又被稱為活化石，這裡的樣本是特別從金門縣水產試驗所借展的喔！", img: "24415_0.jpg" },
+                { q: "哪一種特有種螃蟹具有「雄蟹揮舞雙螯，動作像是在高呼萬歲」的特徵？", options: ["台灣招潮蟹", "短腕和尚蟹", "萬歲大眼蟹"], ans: 2, fact: "萬歲大眼蟹的雄蟹在求偶或威嚇時，會高舉雙螯，動作就像在喊「萬歲」一樣，非常可愛！", img: null },
+                { q: "根據展板，高蹺鴴的育雛時間為：", options: ["4-6月", "5-8月", "5-9月"], ans: 1, fact: "高蹺鴴擁有修長的紅腿，每年5到8月是牠們在濕地孕育下一代的重要時期！", img: "24413_0.jpg" },
+                { q: "【加碼挑戰】根據展板，台灣黑面琵鷺占全世界的：", options: ["40%", "50%", "60%"], ans: 2, fact: "台灣是黑面琵鷺最重要的度冬地，數量佔了全球的60%喔！", img: "24414_0.jpg" }
             ],
             3: [
-                { q: "目前特展區展出哪位致力於黑猩猩研究，並推動全球保育的大使的故事？", options: ["珍古德 (Jane Goodall)", "瑞秋·卡森 (Rachel Carson)", "瑪麗·居禮 (Marie Curie)"], ans: 0, fact: "珍古德博士在非洲坦尚尼亞進行了開創性的黑猩猩研究，改變了人類對動物行為的理解。" },
-                { q: "珍古德博士推動的「根與芽」計畫，其核心理念是什麼？", options: ["只有科學家才能進行自然保育", "只要不斷種樹就能解決所有環境問題", "每個人、每一天都能為世界帶來正面的改變"], ans: 2, fact: "「每個人每一天都能造成改變」，根與芽鼓勵青年學子從關懷環境、動物與社區做起，採取實際行動！" },
-                { q: "珍古德教育及保育協會提倡的日常環保行動中，最容易從生活中做起的是？", options: ["發明新型太陽能板", "減少使用一次性塑膠產品", "每天搭乘飛機巡視森林"], ans: 1, fact: "減少塑膠浪費、愛護身邊的小動物，都是實踐「根與芽」精神的最好方式！" },
-                { q: "【加碼挑戰】珍古德博士最初是在哪個大洲展開她著名的黑猩猩野外觀察？", options: ["非洲", "南美洲", "亞洲"], ans: 0, fact: "她二十多歲時就前往非洲的貢貝溪國家公園，開始了長達數十年的黑猩猩研究之旅。" }
+                { q: "目前特展區展出哪位致力於黑猩猩研究，並推動全球保育的大使的故事？", options: ["珍古德 (Jane Goodall)", "瑞秋·卡森 (Rachel Carson)", "瑪麗·居禮 (Marie Curie)"], ans: 0, fact: "珍古德博士在非洲坦尚尼亞進行了開創性的黑猩猩研究，改變了人類對動物行為的理解。", img: null },
+                { q: "珍古德博士推動的「根與芽」計畫，其核心理念是什麼？", options: ["只有科學家才能進行自然保育", "只要不斷種樹就能解決所有環境問題", "每個人、每一天都能為世界帶來正面的改變"], ans: 2, fact: "「每個人每一天都能造成改變」，根與芽鼓勵青年學子從關懷環境、動物與社區做起，採取實際行動！", img: null },
+                { q: "根據展板，珍古德博士最愛的動物是：", options: ["大猩猩", "狗", "猴子"], ans: 1, fact: "雖然珍古德以研究黑猩猩聞名，但她曾說過她最愛的動物其實是狗喔！", img: "24412_0.jpg" },
+                { q: "【加碼挑戰】根據展板，哪一個計畫強調動手實作與場域學習？", options: ["綠拇指計畫", "我們的海洋", "根與芽動物大遊行"], ans: 0, fact: "綠拇指計畫鼓勵學子親自動手參與，透過場域學習深化對環境的認識！", img: "24411_0.jpg" }
             ]
         };
 
@@ -662,6 +669,16 @@
             document.getElementById('quiz-progress-text').innerText = `進度: ${currentQIndex} / ${targetQCount}`;
             document.getElementById('quiz-question-text').innerText = qData.q;
             
+            // 處理展板圖片顯示
+            let imgContainer = document.getElementById('quiz-img-container');
+            let imgEl = document.getElementById('quiz-image');
+            if (qData.img) {
+                imgEl.src = qData.img;
+                imgContainer.style.display = 'block';
+            } else {
+                imgContainer.style.display = 'none';
+            }
+            
             let optionsHtml = '';
             qData.options.forEach((opt, idx) => {
                 optionsHtml += `<button class="quiz-btn" onclick="handleQuizAnswer(${idx}, this)">${String.fromCharCode(65+idx)}. ${opt}</button>`;
@@ -681,7 +698,6 @@
             buttons.forEach(b => b.disabled = true);
 
             if(selectedIndex === qData.ans) {
-                // Correct
                 btnEl.style.background = '#d5f5e3';
                 btnEl.style.borderColor = '#2ecc71';
                 btnEl.innerHTML += ' ✅';
@@ -692,7 +708,6 @@
                 
                 document.getElementById('btn-next-quiz').style.display = 'block';
             } else {
-                // Wrong -> 冷卻 3 秒，結束後再跳出增加懲罰的 Modal
                 const originalText = btnEl.innerHTML;
                 btnEl.style.background = '#fadbd8';
                 btnEl.style.borderColor = '#e74c3c';
@@ -725,10 +740,8 @@
         function proceedToNextQuizState() {
             currentQIndex++;
             if(currentQIndex >= targetQCount) {
-                // Floor cleared
                 currentQuizFloor++;
                 if(currentQuizFloor > 3) {
-                    // All floors cleared
                     document.getElementById('quiz-container').innerHTML = `
                         <div style="text-align:center; padding:20px;">
                             <h3 style="color:var(--accent-green);">🎉 館內解謎全數通關！</h3>
@@ -736,7 +749,6 @@
                         </div>
                     `;
                 } else {
-                    // 樓層通關 (深藍色標題)
                     showCustomModal('🌟 樓層通關', `太棒了！準備前往 ${currentQuizFloor} 樓繼續挑戰！`, '出發', '#2980b9', () => {
                         currentQIndex = 0;
                         targetQCount = 3;
@@ -809,7 +821,6 @@
             userImg.onload = function() {
                 
                 if(currentTemplate === 1) {
-                    // 模板一：經典白框 (照片在上，文字在下)
                     ctx.fillStyle = '#fffcf5';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     
@@ -840,19 +851,16 @@
                     ctx.fillText('- 珍古德教育及保育協會 敬上', 750, 680 + lh * 4 + 30);
                 } 
                 else if(currentTemplate === 2) {
-                    // 模板二：生態觀察日誌風 (圖鑑風格)
-                    // 牛皮紙底色
+                    // 生態觀察日誌風 (加入濕地動物元素)
                     ctx.fillStyle = '#F5F1E7'; 
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     
-                    // 復古雙層邊框
                     ctx.strokeStyle = '#5A4D41';
                     ctx.lineWidth = 6;
                     ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
                     ctx.lineWidth = 2;
                     ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
 
-                    // 頂部日誌標籤
                     ctx.fillStyle = '#2C5F2D';
                     ctx.fillRect(30, 50, 300, 50);
                     ctx.fillStyle = '#FFE77AFF';
@@ -861,7 +869,6 @@
                     ctx.textBaseline = 'middle';
                     ctx.fillText('生態觀察日誌', 180, 75);
                     
-                    // 照片區域 (加入深綠色邊框)
                     const targetWidth = 660;
                     const targetHeight = 500;
                     drawImageCover(ctx, userImg, 70, 130, targetWidth, targetHeight);
@@ -869,9 +876,14 @@
                     ctx.lineWidth = 4;
                     ctx.strokeRect(70, 130, targetWidth, targetHeight);
                     
+                    // 加入濕地動植物裝飾元素
+                    ctx.font = '45px Arial';
+                    ctx.fillText('🌿', 85, 110);
+                    ctx.fillText('🦆', 680, 660);
+                    ctx.fillText('🦀', 130, 980);
+                    
                     drawStamp(ctx, 650, 150);
 
-                    // 日誌感文字
                     ctx.fillStyle = '#3E362E'; 
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'top';
@@ -890,10 +902,8 @@
                     ctx.fillText('- 珍古德教育及保育協會 敬上', 730, 730 + lh * 4 + 30);
                 }
                 else if(currentTemplate === 3) {
-                    // 模板三：全幅風景
                     drawImageCover(ctx, userImg, 0, 0, canvas.width, canvas.height);
                     
-                    // 底部漸層
                     let grd = ctx.createLinearGradient(0, 500, 0, 1050);
                     grd.addColorStop(0, "transparent");
                     grd.addColorStop(1, "rgba(0,0,0,0.85)");
@@ -920,7 +930,6 @@
                     ctx.fillText('- 珍古德教育及保育協會 敬上', 750, 810 + lh * 4 + 30);
                 }
 
-                // 導出為實際圖片
                 const finalImgData = canvas.toDataURL('image/jpeg', 0.9);
                 document.getElementById('final-postcard-img').src = finalImgData;
                 
