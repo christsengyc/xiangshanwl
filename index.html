@@ -63,12 +63,14 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 9999; display: none; }
         .hint-content { background: var(--panel-dark); color: white; padding: 25px 20px; border-radius: 12px; border: 2px solid #f39c12; width: 90%; max-width: 400px; text-align: center; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
 
-        /* 對話框樣式 */
+        /* 對話框樣式 (加入頭像) */
         .dialog-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 20; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 15px; display: none; border-radius: 4px; }
-        .dialog-box { background: rgba(255, 255, 255, 0.95); width: 90%; border-radius: 8px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); position: relative; border-left: 5px solid var(--primary-blue); }
-        .dialog-speaker { font-weight: bold; color: var(--primary-blue); margin-bottom: 5px; font-size: 1rem; }
-        .dialog-text { color: #333; font-size: 0.9rem; line-height: 1.5; margin-bottom: 10px; }
-        .dialog-btn { background: var(--accent-blue); color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; float: right; font-size: 0.85rem; }
+        .dialog-box { background: rgba(255, 255, 255, 0.95); width: 92%; border-radius: 8px; padding: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); position: relative; border-left: 5px solid var(--accent-blue); display: flex; gap: 12px; align-items: flex-start;}
+        .dialog-avatar { width: 55px; height: 55px; border-radius: 50%; background-color: #e2e8f0; border: 2px solid var(--accent-blue); flex-shrink: 0; object-fit: cover;}
+        .dialog-content-area { flex-grow: 1; }
+        .dialog-speaker { font-weight: bold; color: var(--primary-blue); margin-bottom: 4px; font-size: 0.95rem; }
+        .dialog-text { color: #333; font-size: 0.9rem; line-height: 1.4; margin-bottom: 8px; }
+        .dialog-btn { background: var(--accent-blue); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; float: right; font-size: 0.8rem; font-weight: bold;}
 
         /* 動態問答區樣式 */
         .quiz-floor-header { background: var(--primary-blue); color: white; padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: bold; font-size: 1.1rem; text-align: center; }
@@ -97,10 +99,17 @@
         .task-card.completed .task-action-btn { background: var(--accent-green); pointer-events: none; }
         #preview-img { width: 100%; max-height: 250px; object-fit: cover; margin-top: 15px; border-radius: 8px; display: none; border: 2px solid #ddd; }
         
-        /* 模板選擇 */
+        /* 模板選擇 (加入預覽圖樣) */
         .template-selector { display: flex; gap: 10px; justify-content: center; margin-top: 15px; display: none; }
-        .tpl-btn { flex: 1; padding: 10px 5px; border: 2px solid #cbd5e0; background: white; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.85rem; font-weight: bold; color: #555; transition: 0.3s;}
-        .tpl-btn.active { border-color: var(--primary-blue); background: #ebf8ff; color: var(--primary-blue); }
+        .tpl-btn { flex: 1; padding: 10px 5px; border: 2px solid #cbd5e0; background: white; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.8rem; font-weight: bold; color: #555; transition: 0.3s;}
+        .tpl-btn.active { border-color: var(--primary-blue); background: #ebf8ff; color: var(--primary-blue); box-shadow: 0 0 8px rgba(52,152,219,0.3);}
+        
+        .tpl-preview-box { width: 100%; height: 50px; margin-bottom: 8px; border-radius: 4px; border: 1px solid #ccc; background-color: #f1f1f1; position: relative; overflow: hidden; }
+        .tpl-prev-1 { background: white; border: 3px solid #eee; } /* 白框 */
+        .tpl-prev-1::after { content:''; display:block; width:100%; height:30px; background:#ccc; margin-top:5px; }
+        .tpl-prev-2 { background: white; border: 1px solid #eee; } /* 拍立得 */
+        .tpl-prev-2::after { content:''; display:block; width:80%; height:30px; background:#ccc; margin: 3px auto 0; border-radius:2px;}
+        .tpl-prev-3 { background: linear-gradient(to bottom, #bdc3c7 60%, #34495e 100%); border: none; } /* 全幅 */
         
         #final-postcard-img { width: 100%; max-width: 450px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); display: block; margin: 0 auto; border: 1px solid #eee; -webkit-touch-callout: default; pointer-events: auto; }
     </style>
@@ -122,7 +131,9 @@
         <div id="tab-info" class="main-tab">
             <div class="info-card">
                 <h3>🏛️ 館內與周邊服務</h3>
-                <img src="24364.jpg" alt="館內與周邊服務" style="width:100%; border-radius:8px; margin-top:5px; margin-bottom:15px; border: 1px solid #ddd;">
+                <img src="24364.jpg" alt="館內與周邊服務" style="width:100%; border-radius:8px; margin-top:5px; border: 1px solid #ddd;">
+                <p style="font-size: 0.8rem; color: #888; text-align: center; margin-top: 5px; margin-bottom: 15px;">(本圖來自Google地圖)</p>
+                
                 <p>📍 <strong>地址：</strong>新竹市香山區大庄里西濱路三段500巷17號</p>
                 <p>📞 <strong>電話：</strong>03-5216121 分機 480</p>
                 <p>💧 <strong>飲水機位置：</strong>位於外面右手邊販賣商品的小房間，歡迎自備水壺補充水分。</p>
@@ -197,9 +208,12 @@
                         
                         <div class="dialog-overlay" id="dialog-overlay">
                             <div class="dialog-box">
-                                <div class="dialog-speaker" id="dialog-speaker"></div>
-                                <div class="dialog-text" id="dialog-text"></div>
-                                <div style="overflow: hidden;"><button class="dialog-btn" onclick="nextDialog()">繼續 ➔</button></div>
+                                <img id="dialog-avatar" class="dialog-avatar" src="" alt="角色頭像">
+                                <div class="dialog-content-area">
+                                    <div class="dialog-speaker" id="dialog-speaker"></div>
+                                    <div class="dialog-text" id="dialog-text"></div>
+                                    <div style="overflow: hidden;"><button class="dialog-btn" onclick="nextDialog()">繼續 ➔</button></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -274,9 +288,18 @@
                         <img id="preview-img" alt="你的攝影作品">
                         
                         <div class="template-selector" id="template-selector">
-                            <div class="tpl-btn active" onclick="selectTemplate(1)">模板一<br>(經典白框)</div>
-                            <div class="tpl-btn" onclick="selectTemplate(2)">模板二<br>(拍立得風)</div>
-                            <div class="tpl-btn" onclick="selectTemplate(3)">模板三<br>(全幅風景)</div>
+                            <div class="tpl-btn active" onclick="selectTemplate(1)">
+                                <div class="tpl-preview-box tpl-prev-1"></div>
+                                模板一<br>(經典白框)
+                            </div>
+                            <div class="tpl-btn" onclick="selectTemplate(2)">
+                                <div class="tpl-preview-box tpl-prev-2"></div>
+                                模板二<br>(拍立得風)
+                            </div>
+                            <div class="tpl-btn" onclick="selectTemplate(3)">
+                                <div class="tpl-preview-box tpl-prev-3"></div>
+                                模板三<br>(全幅風景)
+                            </div>
                         </div>
                     </div>
 
@@ -354,10 +377,13 @@
             goToStage(2);
         }
 
+        // 修改後的 Modal 控制 (讓文字顏色客製化)
         function showCustomModal(title, text, btnText, color, callback) {
             let modal = document.getElementById('hint-modal');
-            modal.querySelector('h3').innerText = title;
-            modal.querySelector('h3').style.color = color;
+            let titleEl = modal.querySelector('h3');
+            titleEl.innerText = title;
+            titleEl.style.color = color;
+            
             document.getElementById('hint-modal-text').innerText = text;
             let btn = document.getElementById('hint-modal-btn');
             btn.innerText = btnText;
@@ -389,6 +415,16 @@
         let isHintTimerActive = false;
         let gameCompleted = false;
 
+        // --- 角色頭像圖片庫 (使用開源 API，可自行替換連結) ---
+        const avatars = {
+            '村民': 'https://api.dicebear.com/7.x/adventurer/svg?seed=Dustin&backgroundColor=e2e8f0',
+            '主角': 'https://api.dicebear.com/7.x/adventurer/svg?seed=Felix&backgroundColor=f1c40f',
+            '支持拆除的居民': 'https://api.dicebear.com/7.x/adventurer/svg?seed=Jack&backgroundColor=3498db',
+            '不支持拆除的居民': 'https://api.dicebear.com/7.x/adventurer/svg?seed=Jocelyn&backgroundColor=e74c3c',
+            '保育員': 'https://api.dicebear.com/7.x/adventurer/svg?seed=Destiny&backgroundColor=2ecc71',
+            '濕地生物': 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Crab&backgroundColor=8e44ad'
+        };
+
         // Dialog System
         let dialogQueue = [];
         let isDialogActive = false;
@@ -406,6 +442,8 @@
                 document.getElementById('dialog-overlay').style.display = 'flex';
                 document.getElementById('dialog-speaker').innerText = d.speaker;
                 document.getElementById('dialog-text').innerText = d.text;
+                // 設定該角色的頭像
+                document.getElementById('dialog-avatar').src = avatars[d.speaker] || avatars['村民'];
             } else {
                 document.getElementById('dialog-overlay').style.display = 'none';
                 isDialogActive = false;
@@ -634,16 +672,34 @@
                 
                 document.getElementById('btn-next-quiz').style.display = 'block';
             } else {
-                // Wrong -> Reset floor with penalty
+                // Wrong -> 結合鎖定冷卻 3 秒，結束後再跳出增加懲罰的 Modal
+                const originalText = btnEl.innerHTML;
                 btnEl.style.background = '#fadbd8';
                 btnEl.style.borderColor = '#e74c3c';
-                btnEl.innerHTML += ' ❌';
                 
-                showCustomModal('⚠️ 哎呀答錯囉！', '讓我們冷靜一下，重新回顧這層樓的展覽，我們增加了一個小考驗喔！', '重新挑戰', '#e74c3c', () => {
-                    currentQIndex = 0;
-                    targetQCount = 4; // Penalty applied
-                    renderQuizUI();
-                });
+                let timeLeft = 3;
+                btnEl.innerHTML = `❌ 冷靜一下 (${timeLeft}s)`;
+                
+                const timer = setInterval(() => {
+                    timeLeft--;
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        btnEl.style.background = 'white';
+                        btnEl.style.borderColor = '#cbd5e0';
+                        btnEl.innerHTML = originalText;
+                        buttons.forEach(b => b.disabled = false);
+                        
+                        // 倒數結束後，跳出提示並增加一題懲罰
+                        showCustomModal('⚠️ 哎呀答錯囉！', '讓我們冷靜一下，重新回顧這層樓的展覽，我們增加了一個小考驗喔！', '重新挑戰', '#c0392b', () => {
+                            currentQIndex = 0;
+                            targetQCount = 4; // Penalty applied (4 questions)
+                            renderQuizUI();
+                        });
+                        
+                    } else {
+                        btnEl.innerHTML = `❌ 冷靜一下 (${timeLeft}s)`;
+                    }
+                }, 1000);
             }
         }
 
@@ -661,7 +717,8 @@
                         </div>
                     `;
                 } else {
-                    showCustomModal('🌟 樓層通關', `太棒了！準備前往 ${currentQuizFloor} 樓繼續挑戰！`, '出發', 'var(--primary-blue)', () => {
+                    // 樓層通關 (文字改為高對比度的深藍色)
+                    showCustomModal('🌟 樓層通關', `太棒了！準備前往 ${currentQuizFloor} 樓繼續挑戰！`, '出發', '#2980b9', () => {
                         currentQIndex = 0;
                         targetQCount = 3;
                         renderQuizUI();
@@ -703,11 +760,10 @@
                     preview.style.display = 'block';
                     
                     const btn = document.getElementById('btn-camera');
-                    btn.innerHTML = '✅ 照片紀錄完成！(可重新選擇)';
+                    btn.innerHTML = '✅ 照片紀錄完成！(可重選)';
                     btn.style.background = 'var(--accent-green)';
                     document.getElementById('task-photo').classList.add('completed');
                     
-                    // 顯示模板選擇與完成按鈕
                     document.getElementById('template-selector').style.display = 'flex';
                     document.getElementById('btn-finish').style.display = 'block';
                 }
@@ -749,22 +805,25 @@
                     drawText(ctx, '#333333', 40, 620);
                 } 
                 else if(currentTemplate === 2) {
-                    // 模板二：拍立得風
-                    ctx.fillStyle = '#e2e8f0'; // 底色
+                    // 模板二：全新設計的拍立得風
+                    // 背景色
+                    ctx.fillStyle = '#e2e8f0'; 
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     
-                    // 拍立得相紙
+                    // 拍立得白色相紙 (帶立體陰影)
                     ctx.fillStyle = '#ffffff';
-                    ctx.shadowColor = "rgba(0,0,0,0.2)";
-                    ctx.shadowBlur = 15;
-                    ctx.shadowOffsetX = 5; ctx.shadowOffsetY = 5;
-                    ctx.fillRect(80, 80, 640, 800);
-                    ctx.shadowColor = "transparent"; // reset
+                    ctx.shadowColor = "rgba(0,0,0,0.15)";
+                    ctx.shadowBlur = 20;
+                    ctx.shadowOffsetX = 0; 
+                    ctx.shadowOffsetY = 10;
+                    ctx.fillRect(100, 80, 600, 750);
+                    ctx.shadowColor = "transparent"; // 重置陰影避免影響其他繪圖
                     
-                    drawImageCover(ctx, userImg, 110, 110, 580, 580);
+                    // 照片區域 (正方形裁切)
+                    drawImageCover(ctx, userImg, 120, 100, 560, 560);
                     
-                    drawStamp(ctx, 650, 150);
-                    drawText(ctx, '#333333', 120, 720, true); // compact text
+                    drawStamp(ctx, 600, 150);
+                    drawText(ctx, '#333333', 130, 680, true); 
                 }
                 else if(currentTemplate === 3) {
                     // 模板三：全幅風景
@@ -846,7 +905,7 @@
 
             ctx.textAlign = 'right';
             ctx.font = '24px "Microsoft JhengHei", sans-serif';
-            ctx.fillText('- 珍古德教育及保育協會 敬上', x + (compact? 560 : 710), y + 60 + lh * 4 + (compact? 10: 50));
+            ctx.fillText('- 珍古德教育及保育協會 敬上', x + (compact? 540 : 710), y + 60 + lh * 4 + (compact? 10: 50));
         }
     </script>
 </body>
